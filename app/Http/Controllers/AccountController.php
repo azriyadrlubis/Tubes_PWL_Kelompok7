@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AccountController extends Controller
 {
@@ -76,6 +77,55 @@ class AccountController extends Controller
         $account->delete();
 
         return redirect()->route('accounts.index')->with('success', 'Akun berhasil dihapus.');
+    }
+
+    public function transferForm()
+    {
+        $accounts = Account::where('user_id', auth()->id())
+            ->orderBy('name')
+            ->get();
+
+        return view('accounts.transfer', compact('accounts'));
+    }
+
+    public function processTransfer(Request $request)
+    {
+        $data = $request->validate([
+            'from_account_id' => 'required|exists:accounts,id',
+            'to_account_id' => 'required|exists:accounts,id|different:from_account_id',
+            'amount' => 'required|numeric|min:0.01',
+        ], [
+            'to_account_id.different' => 'Akun tujuan harus berbeda dari akun sumber.',
+        ]);
+
+        $accounts = Account::where('user_id', auth()->id())
+            ->whereIn('id', [$data['from_account_id'], $data['to_account_id']])
+            ->get();
+
+        if ($accounts->count() !== 2) {
+            abort(403);
+        }
+
+        $fromAccount = $accounts->firstWhere('id', $data['from_account_id']);
+        $toAccount = $accounts->firstWhere('id', $data['to_account_id']);
+
+        if (! $fromAccount || ! $toAccount) {
+            abort(403);
+        }
+
+        if ($fromAccount->balance < $data['amount']) {
+            return redirect()->route('accounts.transfer')->withErrors(['amount' => 'Saldo tidak cukup pada akun sumber.'])->withInput();
+        }
+
+        DB::transaction(function () use ($fromAccount, $toAccount, $data) {
+            $fromAccount->balance = $fromAccount->balance - $data['amount'];
+            $toAccount->balance = $toAccount->balance + $data['amount'];
+
+            $fromAccount->save();
+            $toAccount->save();
+        });
+
+        return redirect()->route('accounts.index')->with('success', 'Transfer berhasil diproses.');
     }
 
     private function authorizeOwner(Account $account): void

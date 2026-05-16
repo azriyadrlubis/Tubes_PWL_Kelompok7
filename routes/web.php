@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ProfileController;
@@ -17,7 +17,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('accounts/transfer', [AccountController::class, 'transferForm'])->name('accounts.transfer');
+    Route::post('accounts/transfer', [AccountController::class, 'processTransfer'])->name('accounts.transfer.store');
     Route::resource('accounts', AccountController::class);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -1,9 +1,9 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dompet Saya</h2>
-                <p class="text-sm text-gray-500">Kelola akun Anda secara pribadi dan lihat saldo setiap dompet di sini.</p>
+                <h2 class="font-semibold text-2xl text-slate-900 tracking-tight">Dompet Saya</h2>
+                <p class="text-sm text-slate-500 max-w-2xl">Kelola akun Anda secara ringkas dalam satu tampilan profesional.</p>
             </div>
         </div>
     </x-slot>
@@ -11,141 +11,133 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(session('success'))
-                <div class="mb-6 rounded-3xl border border-green-200 bg-green-50 px-6 py-4 text-green-700 shadow-sm">
+                <div class="mb-6 rounded-[28px] border border-emerald-200/80 bg-emerald-50/80 px-6 py-4 text-emerald-900 shadow-sm">
                     {{ session('success') }}
                 </div>
             @endif
 
+            @php
+                $typeLabels = [
+                    'bank' => 'Bank',
+                    'cash' => 'Cash',
+                    'credit' => 'Kartu Kredit',
+                    'other' => 'E-wallet',
+                ];
+
+                $typeIcons = [
+                    'bank' => '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6"/><path d="M5 10v10h14V10"/><path d="M10 14h4"/><path d="M7 20v-6"/><path d="M17 20v-6"/></svg>',
+                    'cash' => '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5"/><path d="M3 7h18"/><path d="M7 7v10"/><path d="M17 7v10"/><circle cx="12" cy="13" r="2"/></svg>',
+                    'credit' => '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="3"/><path d="M2 11h20"/><path d="M6 16h2"/></svg>',
+                    'other' => '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2h10a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3Z"/><path d="M12 18h.01"/></svg>',
+                ];
+
+                $totalBalance = $accounts->sum('balance');
+            @endphp
+
+            <div class="mb-6 rounded-[32px] bg-slate-900/5 p-6 ring-1 ring-slate-200/80">
+                <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div class="rounded-[28px] bg-white p-6 shadow-sm ring-1 ring-slate-200/80">
+                            <p class="text-xs uppercase tracking-[0.24em] text-slate-500">Saldo Total</p>
+                            <p class="mt-3 text-3xl font-semibold text-slate-900">Rp {{ number_format($totalBalance, 0, ',', '.') }}</p>
+                            <p class="mt-2 text-sm text-slate-500">Ringkasan semua dompet aktif Anda.</p>
+                        </div>
+                        <div class="rounded-[28px] bg-white p-6 shadow-sm ring-1 ring-slate-200/80">
+                            <p class="text-xs uppercase tracking-[0.24em] text-slate-500">Akun Aktif</p>
+                            <p class="mt-3 text-3xl font-semibold text-slate-900">{{ $accounts->count() }}</p>
+                            <p class="mt-2 text-sm text-slate-500">Jumlah dompet yang sedang aktif.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end">
+                        <a href="{{ route('accounts.transfer') }}" class="inline-flex h-12 items-center justify-center rounded-full bg-slate-900 px-6 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition hover:bg-slate-800">Transfer</a>
+                    </div>
+                </div>
+            </div>
+
             @if($accounts->isEmpty())
-                <div class="rounded-3xl border border-dashed border-gray-300 bg-white p-12 text-center shadow-sm">
-                    <div class="mx-auto h-24 w-24 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                        <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10.5V19a2 2 0 002 2h14a2 2 0 002-2v-8.5M5 10.5L12 4l7 6.5M5 10.5h14" />
+                <div class="rounded-[28px] border border-dashed border-slate-200 bg-white p-14 text-center shadow-sm">
+                    <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-slate-100 mb-4">
+                        <svg class="h-10 w-10 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 7h16" />
+                            <path d="M12 7v12" />
+                            <path d="M7 7v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V7" />
                         </svg>
                     </div>
-                    <p class="text-gray-500 mb-4">Belum ada akun. Tambahkan akun untuk mulai mengelola saldo.</p>
+                    <p class="text-sm font-semibold text-slate-900 mb-2">Belum ada wallet</p>
+                    <p class="text-sm text-slate-500">Tidak ada akun yang dapat ditampilkan saat ini. Tambahkan wallet melalui navigasi lain untuk mulai mengelola saldo.</p>
                 </div>
             @else
-                <div class="space-y-6">
-                    <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                        @php
-                            $balanced = $accounts->sum('balance');
-                        @endphp
-                        <div class="rounded-3xl bg-gradient-to-br from-blue-600 to-blue-800 text-white p-6 shadow-xl">
-                            <p class="text-sm font-semibold uppercase tracking-[0.24em] text-blue-100">Saldo Total</p>
-                            <p class="mt-4 text-4xl font-black">Rp {{ number_format($balanced, 0, ',', '.') }}</p>
-                        </div>
-                        <div class="rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-white p-6 shadow-xl">
-                            <p class="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-100">Jumlah Akun</p>
-                            <p class="mt-4 text-4xl font-black">{{ $accounts->count() }}</p>
-                        </div>
-                        <div class="rounded-3xl bg-gradient-to-br from-purple-600 to-pink-600 text-white p-6 shadow-xl">
-                            <p class="text-sm font-semibold uppercase tracking-[0.24em] text-purple-100">Tipe Teratas</p>
-                            <p class="mt-4 text-4xl font-black">{{ ucfirst($accounts->first()->type) }}</p>
-                        </div>
-                    </div>
-
-                    <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                        @foreach($accounts as $account)
-                            @php
-                                $typeLabels = [
-                                    'bank' => 'Bank',
-                                    'cash' => 'Cash',
-                                    'credit' => 'Kartu Kredit',
-                                    'other' => 'E-wallet',
-                                ];
-
-                                $typeColors = [
-                                    'bank' => 'from-blue-600 to-blue-800',
-                                    'cash' => 'from-emerald-500 to-emerald-700',
-                                    'credit' => 'from-purple-600 to-pink-600',
-                                    'other' => 'from-orange-500 to-red-600',
-                                ];
-
-                                $typeIconBg = [
-                                    'bank' => 'bg-blue-400',
-                                    'cash' => 'bg-emerald-400',
-                                    'credit' => 'bg-purple-400',
-                                    'other' => 'bg-orange-400',
-                                ];
-
-                                // Detect bank icons based on account name
-                                $bankName = strtolower($account->name);
-                                $isBankAccount = $account->type === 'bank';
-                                
-                                $bankIcons = [
-                                    'bni' => '🏦',
-                                    'bca' => '🏦',
-                                    'mandiri' => '🏦',
-                                    'permata' => '🏦',
-                                    'cimb' => '🏦',
-                                    'danamon' => '🏦',
-                                    'anz' => '🏦',
-                                ];
-
-                                $bankIcon = '🏦';
-                                if ($isBankAccount) {
-                                    foreach ($bankIcons as $key => $icon) {
-                                        if (strpos($bankName, $key) !== false) {
-                                            $bankIcon = $icon;
-                                            break;
+                <div class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm">
+                    <table class="min-w-full divide-y divide-slate-200 text-sm text-slate-700">
+                        <thead class="bg-slate-50 text-slate-500">
+                            <tr>
+                                <th scope="col" class="px-6 py-4 text-left font-semibold tracking-[0.16em] uppercase">Wallet</th>
+                                <th scope="col" class="px-6 py-4 text-left font-semibold tracking-[0.16em] uppercase">Type</th>
+                                <th scope="col" class="px-6 py-4 text-left font-semibold tracking-[0.16em] uppercase">Balance</th>
+                                <th scope="col" class="px-6 py-4 text-left font-semibold tracking-[0.16em] uppercase">Transactions</th>
+                                <th scope="col" class="px-6 py-4 text-right font-semibold tracking-[0.16em] uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 bg-white">
+                            @foreach($accounts as $account)
+                                @php
+                                    $bankName = strtolower($account->name);
+                                    $bankKeys = ['bni', 'bca', 'mandiri', 'permata', 'cimb', 'danamon', 'anz'];
+                                    $typeIcon = $typeIcons[$account->type] ?? $typeIcons['other'];
+                                    if ($account->type === 'bank') {
+                                        foreach ($bankKeys as $bankKey) {
+                                            if (strpos($bankName, $bankKey) !== false) {
+                                                $typeIcon = $typeIcons['bank'];
+                                                break;
+                                            }
                                         }
                                     }
-                                }
-
-                                $accountLabel = $typeLabels[$account->type] ?? 'Dompet';
-                                $gradientColor = $typeColors[$account->type] ?? 'from-slate-600 to-slate-800';
-                                $iconBg = $typeIconBg[$account->type] ?? 'bg-slate-400';
-                            @endphp
-
-                            <div class="group relative overflow-hidden rounded-3xl bg-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                                <div class="absolute inset-0 bg-gradient-to-br {{ $gradientColor }} opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                
-                                <div class="relative px-6 py-6">
-                                    <!-- Header -->
-                                    <div class="flex items-start justify-between mb-6">
-                                        <div>
-                                            <p class="text-sm uppercase tracking-widest font-bold text-slate-500 group-hover:text-white transition-colors">{{ $accountLabel }}</p>
-                                            <h3 class="mt-2 text-2xl font-black text-slate-900 group-hover:text-white transition-colors">{{ $account->name }}</h3>
+                                @endphp
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-6 py-5">
+                                        <div class="flex items-center gap-4">
+                                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-700">
+                                                {!! $typeIcon !!}
+                                            </div>
+                                            <div>
+                                                <p class="font-semibold text-slate-900">{{ $account->name }}</p>
+                                                <p class="text-xs text-slate-500">ID {{ $account->id }}</p>
+                                            </div>
                                         </div>
-                                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl {{ $iconBg }} shadow-lg text-2xl group-hover:scale-110 transition-transform duration-300">
-                                            @if($account->type === 'bank')
-                                                {{ $bankIcon }}
-                                            @elseif($account->type === 'cash')
-                                                💵
-                                            @elseif($account->type === 'credit')
-                                                💳
-                                            @else
-                                                📱
-                                            @endif
+                                    </td>
+                                    <td class="px-6 py-5">
+                                        <span class="inline-flex rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-700">{{ $typeLabels[$account->type] ?? ucfirst($account->type) }}</span>
+                                    </td>
+                                    <td class="px-6 py-5 font-semibold text-slate-900">Rp {{ number_format($account->balance, 0, ',', '.') }}</td>
+                                    <td class="px-6 py-5 text-slate-500">0 transaksi</td>
+                                    <td class="px-6 py-5 text-right align-middle">
+                                        <div class="flex items-center justify-end gap-2">
+                                            <a href="{{ route('accounts.edit', $account) }}" class="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400/20 leading-none">
+                                                <svg class="h-5 w-5 text-slate-700 translate-y-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M4 17.25V21h3.75L18.81 10.94l-3.75-3.75L4 17.25z" />
+                                                    <path d="M14.06 6.94l3 3" />
+                                                </svg>
+                                            </a>
+                                            <form action="{{ route('accounts.destroy', $account) }}" method="POST" class="flex items-center">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" onclick="return confirm('Hapus akun ini?')" class="flex h-11 w-11 items-center justify-center rounded-2xl border border-red-200 bg-red-50 text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-400/20 leading-none appearance-none">
+                                                    <svg class="h-5 w-5 text-red-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M3 6h18" />
+                                                        <path d="M8 6v14a2 2 0 002 2h4a2 2 0 002-2V6" />
+                                                        <path d="M10 11v6" />
+                                                        <path d="M14 11v6" />
+                                                        <path d="M9 6V4h6v2" />
+                                                    </svg>
+                                                </button>
+                                            </form>
                                         </div>
-                                    </div>
-
-                                    <!-- Balance -->
-                                    <div class="mb-6">
-                                        <p class="text-xs uppercase tracking-wider text-slate-500 group-hover:text-white transition-colors font-semibold">Saldo</p>
-                                        <p class="mt-2 text-3xl font-black text-slate-900 group-hover:text-white transition-colors">Rp {{ number_format($account->balance, 0, ',', '.') }}</p>
-                                    </div>
-
-                                    <!-- Actions -->
-                                    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                                        <a href="{{ route('accounts.edit', $account) }}" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-white/20 text-white hover:bg-white/30 py-2 px-3 text-sm font-semibold transition-colors backdrop-blur-sm">
-                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-7 0l7-7m0 0l-3-3m3 3L13 2"/></svg>
-                                            Edit
-                                        </a>
-                                        <form action="{{ route('accounts.destroy', $account) }}" method="POST" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" onclick="return confirm('Hapus akun ini?')" class="inline-flex items-center justify-center gap-2 rounded-xl bg-red-500/30 text-white hover:bg-red-500/50 py-2 px-3 text-sm font-semibold transition-colors backdrop-blur-sm">
-                                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                                Hapus
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             @endif
         </div>
