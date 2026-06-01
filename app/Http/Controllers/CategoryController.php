@@ -10,6 +10,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::where('user_id', auth()->id())
+            ->orWhereNull('user_id')
             ->orderBy('name')
             ->get();
 

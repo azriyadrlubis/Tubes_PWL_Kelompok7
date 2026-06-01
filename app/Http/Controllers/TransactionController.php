@@ -28,6 +28,7 @@ class TransactionController extends Controller
             ->get();
 
         $categories = Category::where('user_id', auth()->id())
+            ->orWhereNull('user_id')
             ->orderBy('name')
             ->get();
 
@@ -67,6 +68,7 @@ class TransactionController extends Controller
             ->get();
 
         $categories = Category::where('user_id', auth()->id())
+            ->orWhereNull('user_id')
             ->orderBy('name')
             ->get();
 
