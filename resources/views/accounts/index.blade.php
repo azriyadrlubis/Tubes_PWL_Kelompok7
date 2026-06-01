@@ -93,6 +93,7 @@
                         ? $accounts->getCollection()
                         : collect($accounts);
 
+                $showArchived = request()->boolean('archived');
                 $totalBalance = $accountItems->sum('balance');
                 $activeCount = $accountItems->count();
                 $topAccount = $accountItems->sortByDesc('balance')->first();
@@ -117,13 +118,26 @@
                 <div class="mb-7 flex flex-col gap-4 border-b border-slate-200 pb-6 lg:flex-row lg:items-end lg:justify-between">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Pusat Dompet</p>
-                        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">Akun Keuangan</h1>
+                        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+                            {{ $showArchived ? 'Arsip Akun' : 'Akun Keuangan' }}
+                        </h1>
                         <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-                            Pantau saldo, pindahkan dana, dan kelola semua dompet dari satu tempat.
+                            {{ $showArchived ? 'Lihat akun yang sudah disimpan di arsip.' : 'Pantau saldo, pindahkan dana, dan kelola semua akun dari satu tempat.' }}
                         </p>
                     </div>
 
                     <div class="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+                        <a href="{{ $showArchived ? route('accounts.index') : route('accounts.index', ['archived' => 1]) }}"
+                            class="ui-button inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2 focus:ring-offset-[#f6f7f9]">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 8v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8" />
+                                <path d="M10 12h4" />
+                                <path d="M3 8l2-5h14l2 5" />
+                            </svg>
+                            {{ $showArchived ? 'Akun Aktif' : 'Arsip' }}
+                        </a>
+
                         <a href="{{ route('accounts.transfer') }}"
                             class="ui-button inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white shadow-sm shadow-slate-900/10 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-[#f6f7f9]">
                             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -172,7 +186,7 @@
 
                         <div class="mt-7 grid gap-3 sm:grid-cols-3">
                             <div class="rounded-lg border border-white/10 bg-white/[0.06] p-4">
-                                <p class="text-xs text-slate-400">Akun aktif</p>
+                                <p class="text-xs text-slate-400">{{ $showArchived ? 'Akun arsip' : 'Akun aktif' }}</p>
                                 <p class="mt-2 text-2xl font-bold">{{ $activeCount }}</p>
                             </div>
 
@@ -196,7 +210,7 @@
                         <div class="ui-card rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
                             <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Portofolio</p>
                             <p class="mt-3 text-3xl font-bold text-slate-950">{{ $activeCount }}</p>
-                            <p class="mt-1 text-sm text-slate-500">Dompet tersedia.</p>
+                            <p class="mt-1 text-sm text-slate-500">{{ $showArchived ? 'Tersimpan di arsip.' : 'Akun tersedia.' }}</p>
                         </div>
 
                         <div class="ui-card rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
@@ -204,7 +218,7 @@
                             <p class="mt-3 text-3xl font-bold text-slate-950">
                                 Rp{{ number_format($activeCount > 0 ? $totalBalance / $activeCount : 0, 0, ',', '.') }}
                             </p>
-                            <p class="mt-1 text-sm text-slate-500">Per akun aktif.</p>
+                            <p class="mt-1 text-sm text-slate-500">{{ $showArchived ? 'Per akun arsip.' : 'Per akun aktif.' }}</p>
                         </div>
                     </div>
                 </div>
@@ -277,11 +291,15 @@
                             </svg>
                         </div>
                         <h3 class="text-xl font-semibold text-slate-950">Belum ada akun</h3>
-                        <p class="mt-2 text-sm text-slate-500">Tambahkan akun pertama untuk mulai mengelola saldo.</p>
-                        <a href="{{ route('accounts.create') }}"
-                            class="ui-button mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 text-sm font-semibold text-white shadow-sm shadow-emerald-700/15 hover:bg-emerald-700">
-                            Tambah Akun Pertamamu
-                        </a>
+                        <p class="mt-2 text-sm text-slate-500">
+                            {{ $showArchived ? 'Belum ada akun yang diarsipkan.' : 'Tambahkan akun pertama untuk mulai mengelola saldo.' }}
+                        </p>
+                        @unless ($showArchived)
+                            <a href="{{ route('accounts.create') }}"
+                                class="ui-button mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 text-sm font-semibold text-white shadow-sm shadow-emerald-700/15 hover:bg-emerald-700">
+                                Tambah Akun Pertamamu
+                            </a>
+                        @endunless
                     </div>
                 @else
                     <div class="space-y-3">
@@ -289,6 +307,7 @@
                             @php
                                 $typeIcon = $typeIcons[$account->type] ?? $typeIcons['other'];
                                 $style = $typeStyles[$account->type] ?? $typeStyles['other'];
+                                $isArchived = ! empty($account->archived_at);
                             @endphp
 
                             <article
@@ -318,6 +337,18 @@
                                             </h3>
 
                                             <div class="mt-2 flex flex-wrap items-center gap-2">
+                                                @if ($account->is_pinned ?? false)
+                                                    <span class="inline-flex rounded-md bg-slate-950 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white">
+                                                        Utama
+                                                    </span>
+                                                @endif
+
+                                                @if ($isArchived)
+                                                    <span class="inline-flex rounded-md bg-slate-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-600 ring-1 ring-slate-200">
+                                                        Arsip
+                                                    </span>
+                                                @endif
+
                                                 <span class="inline-flex rounded-md px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ring-1 {{ $style['soft'] }}">
                                                     {{ $typeLabels[$account->type] ?? ucfirst($account->type) }}
                                                 </span>
@@ -342,6 +373,22 @@
                                         </div>
 
                                         <div class="pointer-events-auto mt-0 flex shrink-0 justify-end gap-2 md:mt-3">
+                                            @unless ($isArchived)
+                                                <form action="{{ route('accounts.pin', $account) }}" method="POST">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit"
+                                                        class="ui-button inline-flex h-9 items-center justify-center gap-2 rounded-md bg-white px-3 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50 hover:ring-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                                                        aria-label="{{ ($account->is_pinned ?? false) ? 'Lepas pin akun' : 'Pin akun utama' }}">
+                                                        <svg class="h-4 w-4 {{ ($account->is_pinned ?? false) ? 'fill-slate-950 text-slate-950' : '' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path d="M12 17.3 18.2 21l-1.6-7.1L22 9.1l-7.2-.6L12 2 9.2 8.5 2 9.1l5.4 4.8L5.8 21z" />
+                                                        </svg>
+                                                        <span class="hidden sm:inline">{{ ($account->is_pinned ?? false) ? 'Unpin' : 'Pin' }}</span>
+                                                    </button>
+                                                </form>
+                                            @endunless
+
                                             <a href="{{ route('accounts.edit', $account) }}"
                                                 class="ui-button inline-flex h-9 items-center justify-center gap-2 rounded-md bg-white px-3 text-sm font-semibold text-amber-700 shadow-sm ring-1 ring-slate-200 hover:bg-amber-50 hover:ring-amber-100 focus:outline-none focus:ring-2 focus:ring-amber-300">
                                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -350,6 +397,38 @@
                                                 </svg>
                                                 <span class="hidden sm:inline">Edit</span>
                                             </a>
+
+                                            @if ($isArchived)
+                                                <form action="{{ route('accounts.restore', $account) }}" method="POST">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit"
+                                                        class="ui-button inline-flex h-9 items-center justify-center gap-2 rounded-md bg-white px-3 text-sm font-semibold text-emerald-700 shadow-sm ring-1 ring-emerald-100 hover:bg-emerald-50 hover:ring-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-200">
+                                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path d="M3 12a9 9 0 1 0 3-6.7" />
+                                                            <path d="M3 4v6h6" />
+                                                        </svg>
+                                                        <span class="hidden sm:inline">Pulihkan</span>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <form action="{{ route('accounts.archive', $account) }}" method="POST"
+                                                    onsubmit="return confirm('Arsipkan akun ini? Akun tidak akan muncul di daftar aktif.')">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit"
+                                                        class="ui-button inline-flex h-9 items-center justify-center gap-2 rounded-md bg-white px-3 text-sm font-semibold text-slate-600 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50 hover:ring-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-300">
+                                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path d="M21 8v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8" />
+                                                            <path d="M10 12h4" />
+                                                            <path d="M3 8l2-5h14l2 5" />
+                                                        </svg>
+                                                        <span class="hidden sm:inline">Arsip</span>
+                                                    </button>
+                                                </form>
+                                            @endif
 
                                             <form action="{{ route('accounts.destroy', $account) }}" method="POST"
                                                 onsubmit="return confirm('Hapus akun ini?')">

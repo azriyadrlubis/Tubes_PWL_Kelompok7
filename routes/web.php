@@ -34,6 +34,10 @@ Route::middleware('auth')->group(function () {
     
     Route::get('accounts/{account}/transactions', [TransactionController::class, 'getByAccount'])->name('transactions.byAccount');
     Route::get('categories/{category}/transactions', [TransactionController::class, 'getByCategory'])->name('transactions.byCategory');
+
+    Route::patch('/accounts/{account}/pin', [AccountController::class, 'togglePin'])->name('accounts.pin');
+    Route::patch('/accounts/{account}/archive', [AccountController::class, 'archive'])->name('accounts.archive');
+    Route::patch('/accounts/{account}/restore', [AccountController::class, 'restore'])->name('accounts.restore');
 });
 
 require __DIR__ . '/auth.php';

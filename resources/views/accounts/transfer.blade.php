@@ -1,5 +1,7 @@
 @push('head')
 <style>
+    [x-cloak] { display: none !important; }
+
     @keyframes soft-enter {
         from {
             opacity: 0;
@@ -31,6 +33,10 @@
         .ui-button:hover {
             transform: translateY(-2px);
         }
+
+        .ui-button:disabled:hover {
+            transform: none;
+        }
     }
 </style>
 @endpush
@@ -43,7 +49,58 @@
         </div>
     </x-slot>
 
-    <div class="min-h-screen bg-[#f6f7f9] py-6 text-slate-900 sm:py-10">
+    <div class="min-h-screen bg-[#f6f7f9] py-6 text-slate-900 sm:py-10"
+        x-data="{
+            from: @js((string) old('from_account_id', '')),
+            to: @js((string) old('to_account_id', '')),
+            amount: @js(old('amount', '')),
+            formError: '',
+            showConfirm: false,
+            accounts: @js($accounts->map(fn($account) => ['id' => (string) $account->id, 'name' => $account->name, 'balance' => (float) $account->balance])->values()),
+            accountName(id) {
+                return this.accounts.find(account => account.id === String(id))?.name || '-';
+            },
+            balanceOf(id) {
+                return Number(this.accounts.find(account => account.id === String(id))?.balance || 0);
+            },
+            rupiah(value) {
+                return new Intl.NumberFormat('id-ID').format(Number(value || 0));
+            },
+            validateTransfer() {
+                this.formError = '';
+
+                if (!this.from || !this.to || !this.amount) {
+                    this.formError = 'Lengkapi akun sumber, akun tujuan, dan jumlah transfer.';
+                    return false;
+                }
+
+                if (String(this.from) === String(this.to)) {
+                    this.formError = 'Akun sumber dan tujuan tidak boleh sama.';
+                    return false;
+                }
+
+                if (Number(this.amount) <= 0) {
+                    this.formError = 'Jumlah transfer harus lebih dari Rp0.';
+                    return false;
+                }
+
+                if (Number(this.amount) > this.balanceOf(this.from)) {
+                    this.formError = 'Saldo akun sumber tidak cukup untuk transfer ini.';
+                    return false;
+                }
+
+                return true;
+            },
+            confirmTransfer() {
+                if (this.validateTransfer()) {
+                    this.showConfirm = true;
+                }
+            },
+            submitTransfer() {
+                this.showConfirm = false;
+                this.$refs.transferForm.submit();
+            }
+        }">
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <div class="mb-7 flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
                 <div>
@@ -85,13 +142,14 @@
                         <p class="mt-1 text-sm text-slate-500">Pilih akun sumber, akun tujuan, lalu masukkan nominal.</p>
                     </div>
 
-                    <form action="{{ route('accounts.transfer.store') }}" method="POST" class="space-y-6 p-5 sm:p-6">
+                    <form x-ref="transferForm" action="{{ route('accounts.transfer.store') }}" method="POST" class="space-y-6 p-5 sm:p-6"
+                        @submit.prevent="confirmTransfer()">
                         @csrf
 
                         <div class="grid gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-end">
                             <div>
                                 <label for="from_account_id" class="mb-2 block text-sm font-semibold text-slate-700">Dari Akun</label>
-                                <select id="from_account_id" name="from_account_id" required
+                                <select id="from_account_id" name="from_account_id" required x-model="from"
                                     class="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3.5 text-sm font-medium text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100">
                                     <option value="">Pilih akun sumber</option>
                                     @foreach ($accounts as $account)
@@ -117,7 +175,7 @@
 
                             <div>
                                 <label for="to_account_id" class="mb-2 block text-sm font-semibold text-slate-700">Ke Akun</label>
-                                <select id="to_account_id" name="to_account_id" required
+                                <select id="to_account_id" name="to_account_id" required x-model="to"
                                     class="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3.5 text-sm font-medium text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100">
                                     <option value="">Pilih akun tujuan</option>
                                     @foreach ($accounts as $account)
@@ -137,9 +195,10 @@
                             <div class="flex h-11 overflow-hidden rounded-lg border border-slate-200 bg-slate-50 transition focus-within:border-slate-400 focus-within:bg-white focus-within:ring-2 focus-within:ring-slate-100">
                                 <span class="flex items-center border-r border-slate-200 px-3.5 text-sm font-semibold text-slate-500">Rp</span>
                                 <input id="amount" name="amount" type="number" step="0.01" min="0.01"
-                                    value="{{ old('amount') }}" placeholder="1000000" required
+                                    value="{{ old('amount') }}" placeholder="1000000" required x-model="amount"
                                     class="w-full border-0 bg-transparent px-3.5 text-sm font-medium text-slate-900 outline-none focus:ring-0" />
                             </div>
+                            <p x-cloak x-show="formError" x-text="formError" class="mt-2 text-sm font-medium text-red-600"></p>
                             @error('amount')
                                 <p class="mt-2 text-sm font-medium text-red-600">{{ $message }}</p>
                             @enderror
@@ -200,6 +259,61 @@
                         </div>
                     </div>
                 </aside>
+            </div>
+
+            <div x-cloak x-show="showConfirm" x-transition.opacity
+                class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 px-4 py-6">
+                <div @click.outside="showConfirm = false"
+                    class="w-full max-w-md rounded-lg border border-slate-200 bg-white p-5 shadow-lg shadow-slate-900/15">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Konfirmasi Transfer</p>
+                            <h3 class="mt-2 text-xl font-semibold text-slate-950">Periksa sekali lagi</h3>
+                        </div>
+
+                        <button type="button" @click="showConfirm = false"
+                            class="rounded-md p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 6 6 18" />
+                                <path d="m6 6 12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="mt-5 space-y-3 text-sm">
+                        <div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Dari</p>
+                            <p class="mt-1 font-semibold text-slate-950" x-text="accountName(from)"></p>
+                        </div>
+
+                        <div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Ke</p>
+                            <p class="mt-1 font-semibold text-slate-950" x-text="accountName(to)"></p>
+                        </div>
+
+                        <div class="rounded-lg bg-slate-950 p-4 text-white">
+                            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Nominal</p>
+                            <p class="mt-1 text-2xl font-bold">Rp<span x-text="rupiah(amount)"></span></p>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-end">
+                        <button type="button" @click="showConfirm = false"
+                            class="ui-button inline-flex h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50">
+                            Cek Lagi
+                        </button>
+
+                        <button type="button" @click="submitTransfer()"
+                            class="ui-button inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white shadow-sm shadow-slate-900/10 hover:bg-slate-800">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 6 9 17l-5-5" />
+                            </svg>
+                            Ya, Transfer
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
