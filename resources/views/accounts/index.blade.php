@@ -183,8 +183,7 @@
 
                         <button type="button"
     @click="filter = @js($type)"
-    :class="filter === @js($type) ? 'border-slate-300 bg-white ring-2 ring-slate-200' : 'border-white/70 bg-white/80 ring-1 ring-slate-200/50'"
-    class="rounded-3xl border p-4 text-left shadow-sm transition-colors duration-150 hover:border-slate-300 hover:bg-white">>
+    :class="filter === @js($type) ? 'rounded-3xl border p-4 text-left shadow-sm transition-colors duration-150 hover:border-slate-300 hover:bg-white border-slate-300 bg-white ring-2 ring-slate-200' : 'rounded-3xl border p-4 text-left shadow-sm transition-colors duration-150 hover:border-slate-300 hover:bg-white border-white/70 bg-white/80 ring-1 ring-slate-200/50'">
                             <div class="flex items-center justify-between gap-3">
                                 <div class="flex h-10 w-10 items-center justify-center rounded-2xl {{ $style['icon'] }}">
                                     {!! $typeIcons[$type] ?? $typeIcons['other'] !!}
