@@ -1,10 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
-use App\Http\Controllers\BudgetController;
-use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\OnboardingController;
-use App\Http\Controllers\SavingsGoalController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -31,16 +28,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('accounts', AccountController::class);
+    Route::get('transactions/recurring', [TransactionController::class, 'createRecurring'])->name('transactions.createRecurring');
+    Route::post('transactions/recurring', [TransactionController::class, 'storeRecurring'])->name('transactions.storeRecurring');
     Route::resource('transactions', TransactionController::class);
     
     Route::get('accounts/{account}/transactions', [TransactionController::class, 'getByAccount'])->name('transactions.byAccount');
     Route::get('categories/{category}/transactions', [TransactionController::class, 'getByCategory'])->name('transactions.byCategory');
-    Route::get('monitoring/budgets', [MonitoringController::class, 'budgets'])->name('monitoring.budgets');
-    Route::get('monitoring/savings-goals', [MonitoringController::class, 'savingsGoals'])->name('monitoring.savings-goals');
-    Route::get('monitoring/notifications', [MonitoringController::class, 'notifications'])->name('monitoring.notifications');
-
-    Route::resource('budgets', BudgetController::class);
-    Route::resource('savings-goals', SavingsGoalController::class);
 });
 
 require __DIR__.'/auth.php';

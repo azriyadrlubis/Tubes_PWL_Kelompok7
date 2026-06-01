@@ -10,13 +10,13 @@
                     <p class="text-gray-500 mt-1">Kelola semua transaksi keuangan Anda</p>
                 </div>
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                    <a href="{{ route('budgets.index') }}" class="inline-flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M6 12h12M9 17h6"/></svg>
-                        Budget
+                    <a href="{{ route('transactions.createRecurring') }}" class="inline-flex items-center gap-2 rounded-2xl bg-emerald-100 px-5 py-2.5 text-sm font-semibold text-emerald-800 hover:bg-emerald-200 transition-colors">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        Add Recurring Transaction
                     </a>
                     <a href="{{ route('transactions.create') }}" class="inline-flex items-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                        Tambah Transaksi
+                        Add Transaction
                     </a>
                 </div>
         </div>

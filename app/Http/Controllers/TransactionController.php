@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use App\Models\Category;
+use App\Models\RecurringTransaction;
 use App\Models\Transaction;
+use App\Http\Requests\StoreRecurringTransactionRequest;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
 use Illuminate\Http\Request;
@@ -37,6 +39,80 @@ class TransactionController extends Controller
         $tags = auth()->user()->tags ?? collect();
 
         return view('transactions.create', compact('accounts', 'categories', 'tags'));
+    }
+
+    public function createRecurring()
+    {
+        return view('transactions.create-recurring');
+    }
+
+    public function storeRecurring(StoreRecurringTransactionRequest $request)
+    {
+        $account = Account::where('user_id', auth()->id())->orderBy('name')->first();
+
+        if (! $account) {
+            return redirect()->route('transactions.index')
+                ->with('error', 'Tambahkan akun terlebih dahulu sebelum membuat recurring transaction.');
+        }
+
+        $category = Category::where('user_id', auth()->id())
+            ->orWhereNull('user_id')
+            ->orderByRaw("(name = 'Lain-lain') ASC")
+            ->orderBy('name')
+            ->first();
+
+        $validated = $request->validated();
+
+        DB::transaction(function () use ($validated, $account, $category, &$recurringTransaction) {
+            $recurringTransaction = RecurringTransaction::create([
+                'user_id' => auth()->id(),
+                'account_id' => $account->id,
+                'category_id' => $category ? $category->id : null,
+                'type' => 'expense',
+                'title' => $validated['title'],
+                'description' => $validated['description'] ?? null,
+                'amount' => $validated['amount'],
+                'frequency' => $validated['recurring_frequency'],
+                'interval' => 1,
+                'start_date' => now()->startOfDay(),
+                'end_date' => null,
+                'next_occurrence_date' => now()->startOfDay(),
+                'active' => true,
+            ]);
+
+            while ($recurringTransaction->isDue()) {
+                $this->createRecurringTransactionOccurrence($recurringTransaction);
+                $recurringTransaction->scheduleNextOccurrence();
+            }
+        });
+
+        return redirect()->route('transactions.index')
+            ->with('success', 'Recurring transaction berhasil dibuat.');
+    }
+
+    private function createRecurringTransactionOccurrence(RecurringTransaction $recurringTransaction): void
+    {
+        $transaction = Transaction::create([
+            'user_id' => $recurringTransaction->user_id,
+            'account_id' => $recurringTransaction->account_id,
+            'category_id' => $recurringTransaction->category_id,
+            'type' => $recurringTransaction->type,
+            'title' => $recurringTransaction->title,
+            'description' => $recurringTransaction->description,
+            'amount' => $recurringTransaction->amount,
+            'transaction_date' => $recurringTransaction->next_occurrence_date,
+        ]);
+
+        if ($recurringTransaction->tags->isNotEmpty()) {
+            $transaction->tags()->sync($recurringTransaction->tags->pluck('id')->toArray());
+        }
+
+        $account = $transaction->account;
+        if ($transaction->type === 'income') {
+            $account->increment('balance', $transaction->amount);
+        } else {
+            $account->decrement('balance', $transaction->amount);
+        }
     }
 
     public function store(StoreTransactionRequest $request)
