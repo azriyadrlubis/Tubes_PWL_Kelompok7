@@ -13,65 +13,54 @@ class CategorySeeder extends Seeder
 
     public function run(): void
     {
-        $users = User::all();
-
-        if ($users->isEmpty()) {
-            return;
-        }
-
         $categories = [
-            // Income Categories
+            // Income Categories (Global/Default)
             [
-                'name' => 'Gaji',
+                'user_id' => null,
+                'name' => 'Salary',
                 'type' => 'income',
                 'icon' => 'money-bill-wave',
                 'color' => '#22c55e',
             ],
             [
-                'name' => 'Bonus',
+                'user_id' => null,
+                'name' => 'Other Income',
                 'type' => 'income',
                 'icon' => 'gift',
                 'color' => '#f59e0b',
             ],
             [
-                'name' => 'Freelance',
+                'user_id' => null,
+                'name' => 'Incoming transfer',
                 'type' => 'income',
-                'icon' => 'briefcase',
+                'icon' => 'arrow-right',
                 'color' => '#3b82f6',
             ],
             [
-                'name' => 'Investasi Return',
+                'user_id' => null,
+                'name' => 'Collect Interest',
                 'type' => 'income',
-                'icon' => 'chart-line',
+                'icon' => 'percent',
                 'color' => '#0f766e',
-            ],
-            [
-                'name' => 'Penjualan Barang',
-                'type' => 'income',
-                'icon' => 'tag',
-                'color' => '#7c3aed',
-            ],
-            [
-                'name' => 'Cashback & Refund',
-                'type' => 'income',
-                'icon' => 'redo',
-                'color' => '#ec4899',
             ],
 
             // Expense Categories - Food & Dining
             [
+                'user_id' => null,
                 'name' => 'Makan & Minuman',
                 'type' => 'expense',
                 'icon' => 'utensils',
                 'color' => '#f97316',
             ],
             [
+                'user_id' => null,
                 'name' => 'Kopi & Snack',
                 'type' => 'expense',
                 'icon' => 'coffee',
                 'color' => '#d97706',
             ],
             [
+                'user_id' => null,
                 'name' => 'Restoran',
                 'type' => 'expense',
                 'icon' => 'drumstick-bite',
@@ -80,18 +69,21 @@ class CategorySeeder extends Seeder
 
             // Expense Categories - Transport
             [
+                'user_id' => null,
                 'name' => 'Transportasi',
                 'type' => 'expense',
                 'icon' => 'car',
                 'color' => '#0ea5e9',
             ],
             [
+                'user_id' => null,
                 'name' => 'Bensin',
                 'type' => 'expense',
                 'icon' => 'gas-pump',
                 'color' => '#06b6d4',
             ],
             [
+                'user_id' => null,
                 'name' => 'Taksi & Ojek',
                 'type' => 'expense',
                 'icon' => 'taxi',
@@ -100,18 +92,21 @@ class CategorySeeder extends Seeder
 
             // Expense Categories - Shopping
             [
+                'user_id' => null,
                 'name' => 'Belanja Barang',
                 'type' => 'expense',
                 'icon' => 'shopping-bag',
                 'color' => '#8b5cf6',
             ],
             [
+                'user_id' => null,
                 'name' => 'Pakaian & Fashion',
                 'type' => 'expense',
                 'icon' => 'shirt',
                 'color' => '#d946ef',
             ],
             [
+                'user_id' => null,
                 'name' => 'Elektronik',
                 'type' => 'expense',
                 'icon' => 'laptop',
@@ -120,18 +115,21 @@ class CategorySeeder extends Seeder
 
             // Expense Categories - Utilities
             [
+                'user_id' => null,
                 'name' => 'Listrik & Air',
                 'type' => 'expense',
                 'icon' => 'bolt',
                 'color' => '#eab308',
             ],
             [
+                'user_id' => null,
                 'name' => 'Internet & Telepon',
                 'type' => 'expense',
                 'icon' => 'wifi',
                 'color' => '#14b8a6',
             ],
             [
+                'user_id' => null,
                 'name' => 'Sewa Rumah',
                 'type' => 'expense',
                 'icon' => 'home',
@@ -140,18 +138,21 @@ class CategorySeeder extends Seeder
 
             // Expense Categories - Entertainment
             [
+                'user_id' => null,
                 'name' => 'Hiburan & Film',
                 'type' => 'expense',
                 'icon' => 'film',
                 'color' => '#06b6d4',
             ],
             [
+                'user_id' => null,
                 'name' => 'Gaming',
                 'type' => 'expense',
                 'icon' => 'gamepad',
                 'color' => '#8b5cf6',
             ],
             [
+                'user_id' => null,
                 'name' => 'Buku & Musik',
                 'type' => 'expense',
                 'icon' => 'book',
@@ -160,18 +161,21 @@ class CategorySeeder extends Seeder
 
             // Expense Categories - Health & Fitness
             [
+                'user_id' => null,
                 'name' => 'Kesehatan',
                 'type' => 'expense',
                 'icon' => 'heartbeat',
                 'color' => '#ef4444',
             ],
             [
+                'user_id' => null,
                 'name' => 'Gym & Olahraga',
                 'type' => 'expense',
                 'icon' => 'dumbbell',
                 'color' => '#06b6d4',
             ],
             [
+                'user_id' => null,
                 'name' => 'Obat & Vitamin',
                 'type' => 'expense',
                 'icon' => 'pills',
@@ -180,12 +184,14 @@ class CategorySeeder extends Seeder
 
             // Expense Categories - Education
             [
+                'user_id' => null,
                 'name' => 'Pendidikan',
                 'type' => 'expense',
                 'icon' => 'graduation-cap',
                 'color' => '#3b82f6',
             ],
             [
+                'user_id' => null,
                 'name' => 'Kursus & Workshop',
                 'type' => 'expense',
                 'icon' => 'chalkboard-user',
@@ -194,12 +200,14 @@ class CategorySeeder extends Seeder
 
             // Expense Categories - Insurance & Finance
             [
+                'user_id' => null,
                 'name' => 'Asuransi',
                 'type' => 'expense',
                 'icon' => 'shield',
                 'color' => '#8b5cf6',
             ],
             [
+                'user_id' => null,
                 'name' => 'Cicilan',
                 'type' => 'expense',
                 'icon' => 'credit-card',
@@ -208,12 +216,14 @@ class CategorySeeder extends Seeder
 
             // Expense Categories - Gifts & Charity
             [
+                'user_id' => null,
                 'name' => 'Hadiah & Ucapan',
                 'type' => 'expense',
                 'icon' => 'gift',
                 'color' => '#f43f5e',
             ],
             [
+                'user_id' => null,
                 'name' => 'Donasi & Zakat',
                 'type' => 'expense',
                 'icon' => 'hand-holding-heart',
@@ -222,12 +232,14 @@ class CategorySeeder extends Seeder
 
             // Expense Categories - Savings & Miscellaneous
             [
+                'user_id' => null,
                 'name' => 'Tabungan',
                 'type' => 'expense',
                 'icon' => 'piggy-bank',
                 'color' => '#22c55e',
             ],
             [
+                'user_id' => null,
                 'name' => 'Lain-lain',
                 'type' => 'expense',
                 'icon' => 'ellipsis',
@@ -235,13 +247,11 @@ class CategorySeeder extends Seeder
             ],
         ];
 
-        foreach ($users as $user) {
-            foreach ($categories as $category) {
-                Category::updateOrCreate(
-                    ['user_id' => $user->id, 'name' => $category['name']],
-                    array_merge($category, ['user_id' => $user->id])
-                );
-            }
+        foreach ($categories as $category) {
+            Category::updateOrCreate(
+                ['name' => $category['name'], 'user_id' => null],
+                $category
+            );
         }
     }
 }

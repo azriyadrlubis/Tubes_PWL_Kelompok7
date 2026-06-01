@@ -103,12 +103,10 @@ function categorySelectorData() {
 
         getCategoryEmoji(categoryName) {
             const emojiMap = {
-                'Gaji': '💰',
-                'Bonus': '🎁',
-                'Freelance': '💼',
-                'Investasi Return': '📈',
-                'Penjualan Barang': '🏷️',
-                'Cashback & Refund': '↩️',
+                'Salary': '💰',
+                'Other Income': '🎁',
+                'Incoming transfer': '➡️',
+                'Collect Interest': '%',
                 'Makan & Minuman': '🍽️',
                 'Kopi & Snack': '☕',
                 'Restoran': '🍗',

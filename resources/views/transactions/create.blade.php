@@ -42,6 +42,9 @@
                 @enderror
             </div>
 
+            <!-- Hidden Type Field (auto-filled from category) -->
+            <input type="hidden" name="type" id="type" value="{{ old('type', '') }}">
+
             <!-- Title -->
             <div class="mb-6">
                 <label for="title" class="block text-sm font-semibold text-gray-700 mb-2">
@@ -59,7 +62,7 @@
                     <label for="amount" class="block text-sm font-semibold text-gray-700 mb-2">
                         Jumlah (Rp)
                     </label>
-                    <input type="number" name="amount" id="amount" step="0.01" value="{{ old('amount', 0) }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition @error('amount') border-red-500 @enderror" required placeholder="0">
+                    <input type="text" name="amount" id="amount" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition @error('amount') border-red-500 @enderror" required inputmode="numeric" value="{{ old('amount') ?? '' }}" pattern="[0-9]*">
                     @error('amount')
                         <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
@@ -123,3 +126,38 @@
     </div>
 </div>
 @endsection
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const categories = @json($categories);
+    const typeInput = document.getElementById('type');
+    // Select the transaction form specifically (in main area, not sidebar)
+    const form = document.querySelector('main form') || document.querySelector('form[action*="transactions.store"]');
+    
+    if (!form) {
+        console.error('Transaction form not found');
+        return;
+    }
+    
+    // Update type field before form submission
+    form.addEventListener('submit', function(e) {
+        // Find all category_id inputs and get the one with a value
+        const categoryInputs = form.querySelectorAll('input[name="category_id"]');
+        let categoryIdValue = null;
+        
+        for (let input of categoryInputs) {
+            if (input.value) {
+                categoryIdValue = input.value;
+                break;
+            }
+        }
+        
+        if (categoryIdValue) {
+            const selectedCategory = categories.find(c => c.id == parseInt(categoryIdValue));
+            if (selectedCategory) {
+                typeInput.value = selectedCategory.type;
+            }
+        }
+    });
+});
+</script>
