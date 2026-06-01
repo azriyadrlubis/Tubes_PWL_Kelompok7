@@ -86,6 +86,7 @@ class RecurringTransaction extends Model
     private function incrementDate(Carbon $date): Carbon
     {
         return match ($this->frequency) {
+            'daily' => $date->addDays($this->interval),
             'weekly' => $date->addWeeks($this->interval),
             'yearly' => $date->addYears($this->interval),
             default => $date->addMonths($this->interval),

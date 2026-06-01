@@ -16,7 +16,8 @@ class StoreRecurringTransactionRequest extends FormRequest
         return [
             'title' => 'required|string|max:150',
             'amount' => 'required|numeric|min:0.01',
-            'recurring_frequency' => 'required|in:weekly,monthly,yearly',
+            'recurring_frequency' => 'required|in:daily,weekly,monthly,yearly',
+            'start_date' => 'required|date|after_or_equal:today',
             'description' => 'nullable|string|max:1000',
         ];
     }
@@ -30,7 +31,10 @@ class StoreRecurringTransactionRequest extends FormRequest
             'title.required' => 'Judul transaksi harus diisi.',
             'title.max' => 'Judul transaksi maksimal 150 karakter.',
             'recurring_frequency.required' => 'Pilih jenis recurring.',
-            'recurring_frequency.in' => 'Pilih mingguan, bulanan, atau tahunan.',
+            'recurring_frequency.in' => 'Pilih harian, mingguan, bulanan, atau tahunan.',
+            'start_date.required' => 'Tanggal mulai harus diisi.',
+            'start_date.date' => 'Format tanggal tidak valid.',
+            'start_date.after_or_equal' => 'Tanggal mulai harus hari ini atau lebih baru.',
         ];
     }
 }
