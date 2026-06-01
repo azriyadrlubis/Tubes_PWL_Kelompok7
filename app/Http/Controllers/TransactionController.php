@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
@@ -29,6 +30,7 @@ class TransactionController extends Controller
 
         $categories = Category::where('user_id', auth()->id())
             ->orWhereNull('user_id')
+            ->orderByRaw("(name = 'Lain-lain') ASC")
             ->orderBy('name')
             ->get();
 
@@ -42,11 +44,14 @@ class TransactionController extends Controller
         $validated = $request->validated();
         $validated['user_id'] = auth()->id();
 
-        $transaction = Transaction::create($validated);
+        DB::transaction(function () use ($validated, $request, &$transaction) {
+            $transaction = Transaction::create($validated);
+            $this->applyTransactionBalance($transaction);
 
-        if ($request->has('tags') && is_array($request->tags)) {
-            $transaction->tags()->sync($request->tags);
-        }
+            if ($request->has('tags') && is_array($request->tags)) {
+                $transaction->tags()->sync($request->tags);
+            }
+        });
 
         return redirect()->route('transactions.index')
             ->with('success', 'Transaksi berhasil ditambahkan.');
@@ -69,6 +74,7 @@ class TransactionController extends Controller
 
         $categories = Category::where('user_id', auth()->id())
             ->orWhereNull('user_id')
+            ->orderByRaw("(name = 'Lain-lain') ASC")
             ->orderBy('name')
             ->get();
 
@@ -83,11 +89,16 @@ class TransactionController extends Controller
 
         $validated = $request->validated();
 
-        $transaction->update($validated);
+        DB::transaction(function () use ($validated, $request, $transaction) {
+            $this->reverseTransactionBalance($transaction);
 
-        if ($request->has('tags') && is_array($request->tags)) {
-            $transaction->tags()->sync($request->tags);
-        }
+            $transaction->update($validated);
+            $this->applyTransactionBalance($transaction);
+
+            if ($request->has('tags') && is_array($request->tags)) {
+                $transaction->tags()->sync($request->tags);
+            }
+        });
 
         return redirect()->route('transactions.show', $transaction)
             ->with('success', 'Transaksi berhasil diperbarui.');
@@ -97,10 +108,35 @@ class TransactionController extends Controller
     {
         $this->authorize('delete', $transaction);
 
-        $transaction->delete();
+        DB::transaction(function () use ($transaction) {
+            $this->reverseTransactionBalance($transaction);
+            $transaction->delete();
+        });
 
         return redirect()->route('transactions.index')
             ->with('success', 'Transaksi berhasil dihapus.');
+    }
+
+    private function applyTransactionBalance(Transaction $transaction): void
+    {
+        $account = $transaction->account;
+
+        if ($transaction->type === 'income') {
+            $account->increment('balance', $transaction->amount);
+        } else {
+            $account->decrement('balance', $transaction->amount);
+        }
+    }
+
+    private function reverseTransactionBalance(Transaction $transaction): void
+    {
+        $account = $transaction->account;
+
+        if ($transaction->type === 'income') {
+            $account->decrement('balance', $transaction->amount);
+        } else {
+            $account->increment('balance', $transaction->amount);
+        }
     }
 
     public function getByAccount(Account $account)
