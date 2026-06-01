@@ -69,12 +69,16 @@
 
             <div x-data="{
                 filter: 'all',
+                search: '',
+                accounts: @js($accountItems->map(fn($item) => ['type' => $item->type, 'name' => $item->name])),
                 counts: @js($typeCounts),
-                matches(type) {
-                    return this.filter === 'all' || this.filter === type;
+                matches(type, name = '') {
+                    const matchesType = this.filter === 'all' || this.filter === type;
+                    const matchesSearch = this.search === '' || name.toLowerCase().includes(this.search.toLowerCase());
+                    return matchesType && matchesSearch;
                 },
                 hasMatches() {
-                    return this.filter === 'all' || ((this.counts[this.filter] ?? 0) > 0);
+                    return this.accounts.some(acc => this.matches(acc.type, acc.name));
                 }
             }">
                 <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -164,13 +168,35 @@
                     </div>
                 </div>
 
-                <div class="mb-4 flex flex-wrap gap-2">
-                    <button type="button"
-                        @click="filter = 'all'"
-                        :class="filter === 'all' ? 'bg-slate-950 text-white' : 'bg-white text-slate-600 ring-slate-200'"
-                        class="rounded-full px-4 py-2 text-xs font-bold ring-1 transition">
-                        Semua
-                    </button>
+                <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="relative w-full max-w-md">
+                        <svg class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+                        </svg>
+                        <input
+                            x-model="search"
+                            type="search"
+                            placeholder="Cari akun..."
+                            class="w-full rounded-full border border-slate-200 bg-white/90 px-12 py-2 text-sm text-slate-700 shadow-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+                        />
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button"
+                            @click="filter = 'all'"
+                            :class="filter === 'all' ? 'bg-slate-950 text-white' : 'bg-white text-slate-600 ring-slate-200'"
+                            class="rounded-full px-4 py-2 text-xs font-bold ring-1 transition">
+                            Semua
+                        </button>
+                        @foreach ($typeLabels as $type => $label)
+                            <button type="button"
+                                @click="filter = '{{ $type }}'"
+                                :class="filter === '{{ $type }}' ? 'bg-slate-950 text-white' : 'bg-white text-slate-600 ring-slate-200'"
+                                class="rounded-full px-4 py-2 text-xs font-bold ring-1 transition">
+                                {{ $label }}
+                            </button>
+                        @endforeach
+                    </div>
                 </div>
 
                 <div class="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -222,7 +248,7 @@
                             @endphp
 
                             <article
-                                x-show="matches(@js($account->type))"
+                                x-show="matches(@js($account->type), @js($account->name))"
                                 x-transition
                                 class="group relative overflow-hidden rounded-[30px] border border-white/70 bg-white/90 p-4 shadow-xl shadow-slate-900/5 ring-1 ring-slate-200/70 transition-all duration-200 hover:border-slate-300 hover:bg-white hover:shadow-2xl hover:shadow-slate-900/10 sm:p-5">
                                 <a href="{{ route('accounts.show', $account) }}"
