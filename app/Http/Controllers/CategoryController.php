@@ -9,7 +9,11 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::where('user_id', auth()->id())
+        $categories = Category::where(function($query) {
+            $query->where('user_id', auth()->id())
+                  ->orWhereNull('user_id');
+            })
+            ->distinct('name')
             ->orderBy('name')
             ->get();
 
