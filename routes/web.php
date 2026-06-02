@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\OnboardingController;
@@ -27,11 +27,23 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('accounts/transfer', [AccountController::class, 'transferForm'])->name('accounts.transfer');
+    Route::post('accounts/transfer', [AccountController::class, 'processTransfer'])->name('accounts.transfer.store');
     Route::resource('accounts', AccountController::class);
+    Route::get('transactions/recurring', [TransactionController::class, 'createRecurring'])->name('transactions.createRecurring');
+    Route::post('transactions/recurring', [TransactionController::class, 'storeRecurring'])->name('transactions.storeRecurring');
+    Route::get('transactions/recurring/{recurringTransaction}', [TransactionController::class, 'showRecurring'])->name('transactions.showRecurring');
+    Route::get('transactions/recurring/{recurringTransaction}/edit', [TransactionController::class, 'editRecurring'])->name('transactions.editRecurring');
+    Route::put('transactions/recurring/{recurringTransaction}', [TransactionController::class, 'updateRecurring'])->name('transactions.updateRecurring');
+    Route::delete('transactions/recurring/{recurringTransaction}', [TransactionController::class, 'destroyRecurring'])->name('transactions.destroyRecurring');
     Route::resource('transactions', TransactionController::class);
     
     Route::get('accounts/{account}/transactions', [TransactionController::class, 'getByAccount'])->name('transactions.byAccount');
     Route::get('categories/{category}/transactions', [TransactionController::class, 'getByCategory'])->name('transactions.byCategory');
+
+    Route::patch('/accounts/{account}/pin', [AccountController::class, 'togglePin'])->name('accounts.pin');
+    Route::patch('/accounts/{account}/archive', [AccountController::class, 'archive'])->name('accounts.archive');
+    Route::patch('/accounts/{account}/restore', [AccountController::class, 'restore'])->name('accounts.restore');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

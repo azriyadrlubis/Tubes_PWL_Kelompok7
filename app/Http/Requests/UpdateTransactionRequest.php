@@ -11,6 +11,7 @@ class UpdateTransactionRequest extends FormRequest
         return $this->transaction->user_id === auth()->id();
     }
 
+
     public function rules(): array
     {
         return [
