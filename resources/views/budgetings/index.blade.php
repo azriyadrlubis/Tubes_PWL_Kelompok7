@@ -106,7 +106,7 @@
                         </p>
                     </div>
 
-                    <a href="#budget-form"
+                    <a href="{{ route('budgetings.create') }}"
                         class="ui-button inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 text-sm font-semibold text-white shadow-sm shadow-emerald-700/15 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-[#f6f7f9]">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -171,7 +171,7 @@
                     </div>
                 </div>
 
-                <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+                <div class="grid gap-6">
                     <main class="space-y-5">
                         <section class="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
                             <div class="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
@@ -345,79 +345,6 @@
                             @endif
                         </section>
                     </main>
-
-                    <aside class="space-y-5">
-                        <section id="budget-form" class="rounded-lg border border-slate-200 bg-white shadow-sm">
-                            <div class="border-b border-slate-200 px-5 py-4">
-                                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Form Budget</p>
-                                <h2 class="mt-1 text-lg font-semibold text-slate-950">Tambah budget</h2>
-                            </div>
-
-                            <form action="{{ route('budgetings.store') }}" method="POST" class="space-y-4 p-5">
-                                @csrf
-                                <input type="hidden" name="user_id" value="{{ auth()->id() }}">
-
-                                <div>
-                                    <label for="category_id" class="text-sm font-semibold text-slate-700">Kategori</label>
-                                    <select name="category_id" id="category_id"
-                                        class="mt-2 h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700 shadow-sm outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100">
-                                        <option value="">Pilih kategori</option>
-                                        @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                                {{ $category->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('category_id')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div>
-                                    <label for="limit_amount" class="text-sm font-semibold text-slate-700">Jumlah Limit</label>
-                                    <input type="number" name="limit_amount" id="limit_amount" value="{{ old('limit_amount') }}"
-                                        class="mt-2 h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700 shadow-sm outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100"
-                                        placeholder="0">
-                                    @error('limit_amount')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-3">
-                                    <div>
-                                        <label for="month" class="text-sm font-semibold text-slate-700">Bulan</label>
-                                        <select name="month" id="month"
-                                            class="mt-2 h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700 shadow-sm outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100">
-                                            <option value="">Bulan</option>
-                                            @foreach (range(1, 12) as $month)
-                                                <option value="{{ $month }}" {{ old('month') == $month ? 'selected' : '' }}>
-                                                    {{ str_pad($month, 2, '0', STR_PAD_LEFT) }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('month')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-
-                                    <div>
-                                        <label for="year" class="text-sm font-semibold text-slate-700">Tahun</label>
-                                        <input type="number" name="year" id="year" value="{{ old('year', date('Y')) }}"
-                                            class="mt-2 h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700 shadow-sm outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100"
-                                            placeholder="2026">
-                                        @error('year')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <button type="submit"
-                                    class="ui-button inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 text-sm font-semibold text-white shadow-sm shadow-emerald-700/15 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                    Simpan Budget
-                                </button>
-                            </form>
-                        </section>
-                    </aside>
                 </div>
             </div>
         </div>
