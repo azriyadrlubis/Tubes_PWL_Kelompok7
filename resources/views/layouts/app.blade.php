@@ -19,7 +19,7 @@
 <body class="font-sans antialiased">
     <div class="min-h-screen flex {{ request()->routeIs('accounts.*') ? '-mt-6' : '' }}">
         <!-- Sidebar -->
-        <aside class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg">
+        <aside class="fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-lg">
             <div class="p-6">
                 <h1 class="text-2xl font-bold text-gray-800">MOMA</h1>
                 <p class="text-sm text-gray-500">Management System</p>
@@ -92,7 +92,7 @@
         </aside>
 
         <!-- Main Content -->
-        <div class="ml-64 flex-1 flex flex-col">
+        <div class="ml-64 flex-1 flex flex-col min-w-0 overflow-x-hidden">
             <!-- Navbar -->
             <nav class="sticky top-0 z-30 bg-white shadow">
                 <div class="px-6 py-4 flex justify-between items-center">

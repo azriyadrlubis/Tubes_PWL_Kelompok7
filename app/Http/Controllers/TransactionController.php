@@ -36,14 +36,23 @@ class TransactionController extends Controller
 
     public function create()
     {
-        $accounts = Account::where('user_id', auth()->id())
+        $userId = auth()->user()->id;
+
+        $accounts = Account::where('user_id', $userId)
             ->orderBy('name')
             ->get();
 
-        $categories = Category::where(function($query) {
-            $query->where('user_id', auth()->id())
-                  ->orWhereNull('user_id');
-            })
+        if ($accounts->isEmpty()) {
+            return redirect()->route('accounts.index')
+                ->with('accounts_required', true)
+                ->with('accounts_required_cta_url', route('accounts.create'))
+                ->with('error', 'Kamu belum mempunyai akun. Silakan tambahkan akun terlebih dahulu sebelum membuat transaksi.');
+        }
+
+        $categories = Category::where(function ($query) use ($userId) {
+            $query->where('user_id', $userId)
+                ->orWhereNull('user_id');
+        })
             ->distinct('name')
             ->orderByRaw("(name = 'Lain-lain') ASC")
             ->orderBy('name')

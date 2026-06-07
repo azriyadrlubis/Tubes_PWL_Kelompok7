@@ -33,7 +33,13 @@
         }
     }
 
-    .account-type-radio:checked + .account-type-card .selected-dot {
+.account-type-radio:checked ~ .account-type-card {
+        border-color: rgb(16 185 129);
+        box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.6);
+    }
+
+.account-type-radio:checked ~ .account-type-card .selected-dot {
+        background-color: rgb(16 185 129);
         opacity: 1;
         transform: scale(1);
     }
@@ -130,7 +136,7 @@
 
                                 @foreach ($types as $value => $type)
                                     <label class="cursor-pointer">
-                                        <input type="radio" name="type" value="{{ $value }}" class="account-type-radio peer sr-only"
+                                        <input type="radio" name="type" value="{{ $value }}" id="account-type-{{ $value }}" class="account-type-radio peer sr-only"
                                             @checked(old('type', 'cash') === $value)>
 
                                         <div class="account-type-card ui-card rounded-lg border border-slate-200 bg-white p-4 shadow-sm ring-1 ring-transparent {{ $type['color'] }}">
