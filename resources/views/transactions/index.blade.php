@@ -156,7 +156,25 @@
                 </div>
 
                 <div class="mb-5 rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
-                    <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                        <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                            @if (session('accounts_required'))
+                                <div class="mb-4 w-full rounded-lg border border-rose-200 bg-white px-4 py-3 text-sm font-medium text-rose-800 shadow-sm" role="alert">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                            <div class="font-semibold">Kamu belum mempunyai akun.</div>
+                                            <div class="mt-1">Silakan tambahkan akun terlebih dahulu.</div>
+                                        </div>
+                                        <div class="shrink-0">
+                                            <a href="{{ session('accounts_required_cta_url', route('accounts.create')) }}"
+                                               class="ui-button inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-[#f6f7f9]">
+                                                Tambah akun
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+
                         <div class="relative w-full lg:max-w-md">
                             <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
