@@ -110,22 +110,32 @@
 
                     <!-- Key Information -->
                     <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Informasi Penting</p>
+                        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500\">Informasi Penting</p>
                         <div class="mt-4 grid gap-4 sm:grid-cols-2">
                             <div class="rounded-lg bg-slate-50 p-4 ring-1 ring-slate-200">
-                                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Dibuat</p>
-                                <p class="mt-2 text-lg font-semibold text-slate-950">{{ $savingsGoal->created_at->format('d M Y') }}</p>
-                                <p class="mt-1 text-xs text-slate-500">{{ $savingsGoal->created_at->format('H:i') }}</p>
+                                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400\">Dibuat</p>
+                                <p class="mt-2 text-lg font-semibold text-slate-950\">{{ $savingsGoal->created_at->format('d M Y') }}</p>
+                                <p class="mt-1 text-xs text-slate-500\">{{ $savingsGoal->created_at->format('H:i') }}</p>
                             </div>
                             <div class="rounded-lg bg-slate-50 p-4 ring-1 ring-slate-200">
-                                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Terakhir Diperbarui</p>
-                                <p class="mt-2 text-lg font-semibold text-slate-950">{{ $savingsGoal->updated_at->format('d M Y') }}</p>
-                                <p class="mt-1 text-xs text-slate-500">{{ $savingsGoal->updated_at->format('H:i') }}</p>
+                                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400\">Terakhir Diperbarui</p>
+                                <p class="mt-2 text-lg font-semibold text-slate-950\">{{ $savingsGoal->updated_at->format('d M Y') }}</p>
+                                <p class="mt-1 text-xs text-slate-500\">{{ $savingsGoal->updated_at->format('H:i') }}</p>
                             </div>
                             @if ($savingsGoal->deadline)
                                 <div class="rounded-lg bg-slate-50 p-4 ring-1 ring-slate-200">
-                                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Hari Tersisa</p>
-                                    <p class="mt-2 text-lg font-semibold {{ max(0, now()->diffInDays($savingsGoal->deadline)) <= 7 ? 'text-rose-700' : 'text-slate-950' }}">{{ max(0, now()->diffInDays($savingsGoal->deadline)) }} hari</p>
+                                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400\">Hari Tersisa</p>
+                                    <p class="mt-2 text-lg font-semibold {{ max(0, now()->diffInDays($savingsGoal->deadline)) <= 7 ? 'text-rose-700' : 'text-slate-950' }}\">{{ max(0, now()->diffInDays($savingsGoal->deadline)) }} hari</p>
+                                </div>
+                            @endif
+                            @if ($savingsGoal->account)
+                                <div class="rounded-lg bg-sky-50 p-4 ring-1 ring-sky-200">
+                                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-sky-600\">Akun Terkait</p>
+                                    <p class="mt-2 text-lg font-semibold text-sky-900\">
+                                        <a href="{{ route('accounts.show', $savingsGoal->account->id) }}" class="hover:underline">
+                                            {{ $savingsGoal->account->name }}
+                                        </a>
+                                    </p>
                                 </div>
                             @endif
                         </div>

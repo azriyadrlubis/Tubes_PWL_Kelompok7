@@ -90,6 +90,29 @@
                         @enderror
                     </div>
 
+                    <!-- Account Selection -->
+                    <div>
+                        <label for="account_id" class="block text-sm font-semibold text-slate-700 mb-2">Pilih Akun Dompet</label>
+                        <select 
+                            id="account_id" 
+                            name="account_id"
+                            class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100"
+                        >
+                            <option value="">-- Pilih Akun (Opsional) --</option>
+                            @forelse ($accounts as $account)
+                                <option value="{{ $account->id }}" {{ old('account_id') == $account->id ? 'selected' : '' }}>
+                                    {{ $account->name }} - Rp{{ number_format($account->balance, 0, ',', '.') }}
+                                </option>
+                            @empty
+                                <option value="" disabled>Tidak ada akun tersedia</option>
+                            @endforelse
+                        </select>
+                        @error('account_id')
+                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                        <p class="text-xs text-slate-500 mt-1">Akun yang dipilih akan digunakan untuk tracking savings goal ini</p>
+                    </div>
+
                     <!-- Deadline -->
                     <div>
                         <label for="deadline" class="block text-sm font-semibold text-slate-700 mb-2">Target Deadline</label>
