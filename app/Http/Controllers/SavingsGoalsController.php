@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SavingsGoals;
+use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,14 +11,20 @@ class SavingsGoalsController extends Controller
 {
     public function index()
     {
-        $savingsGoals = SavingsGoals::where('user_id', Auth::id())->get();
+        $savingsGoals = SavingsGoals::where('user_id', Auth::id())
+                                    ->with('account')
+                                    ->get();
 
         return view('savings_goals.index', compact('savingsGoals'));
     }
 
     public function create()
     {
-        return view('savings_goals.create');
+        $accounts = Account::where('user_id', Auth::id())
+                           ->where('archived_at', null)
+                           ->get();
+
+        return view('savings_goals.create', compact('accounts'));
     }
 
     public function store(Request $request)
@@ -27,7 +34,14 @@ class SavingsGoalsController extends Controller
             'target_amount' => 'required|numeric|min:0',
             'current_amount' => 'nullable|numeric|min:0',
             'deadline' => 'nullable|date|after:today',
+            'account_id' => 'nullable|exists:accounts,id',
         ]);
+
+        // Verify account belongs to user
+        if ($validated['account_id']) {
+            $account = Account::where('user_id', Auth::id())
+                             ->findOrFail($validated['account_id']);
+        }
 
         SavingsGoals::create([
             'user_id' => Auth::id(),
@@ -39,7 +53,9 @@ class SavingsGoalsController extends Controller
 
     public function show(string $id)
     {
-        $savingsGoal = SavingsGoals::where('user_id', Auth::id())->findOrFail($id);
+        $savingsGoal = SavingsGoals::where('user_id', Auth::id())
+                                   ->with('account')
+                                   ->findOrFail($id);
 
         return view('savings_goals.show', compact('savingsGoal'));
     }
@@ -48,7 +64,11 @@ class SavingsGoalsController extends Controller
     {
         $savingsGoal = SavingsGoals::where('user_id', Auth::id())->findOrFail($id);
 
-        return view('savings_goals.edit', compact('savingsGoal'));
+        $accounts = Account::where('user_id', Auth::id())
+                           ->where('archived_at', null)
+                           ->get();
+
+        return view('savings_goals.edit', compact('savingsGoal', 'accounts'));
     }
 
     public function update(Request $request, string $id)
@@ -60,7 +80,14 @@ class SavingsGoalsController extends Controller
             'target_amount' => 'required|numeric|min:0',
             'current_amount' => 'nullable|numeric|min:0',
             'deadline' => 'nullable|date|after:today',
+            'account_id' => 'nullable|exists:accounts,id',
         ]);
+
+        // Verify account belongs to user
+        if ($validated['account_id']) {
+            $account = Account::where('user_id', Auth::id())
+                             ->findOrFail($validated['account_id']);
+        }
 
         $savingsGoal->update($validated);
 
