@@ -93,6 +93,9 @@
                             <div class="flex items-start justify-between gap-3 mb-4">
                                 <div class="min-w-0">
                                     <h3 class="truncate text-lg font-semibold text-slate-950">{{ $goal->name }}</h3>
+                                    @if ($goal->account)
+                                        <p class="mt-1 text-xs text-slate-500">Akun: {{ $goal->account->name }}</p>
+                                    @endif
                                     @if ($goal->deadline)
                                         <p class="mt-1 text-xs text-slate-500">Target: {{ $goal->deadline->format('d M Y') }}</p>
                                     @endif
