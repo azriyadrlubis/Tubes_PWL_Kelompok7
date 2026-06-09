@@ -236,6 +236,9 @@
             </div>
         </form>
     </x-modal>
+
+    <!-- Profile Edit Modal -->
+    <x-profile-edit-modal :user="Auth::user()" />
 </body>
 
 </html>
