@@ -60,8 +60,10 @@
                 $netCashflow = $monthlyIncome - $monthlyExpense;
                 $accountCount = $accountCount ?? $accountItems->count();
                 $transactionCount = $transactionCount ?? $transactionItems->count();
-                $budgetLimit = $budgetLimit ?? $totalBudget ?? $budgetItems->sum('limit_amount');
-                $budgetProgress = $budgetLimit > 0 ? min(($monthlyExpense / $budgetLimit) * 100, 100) : 0;
+                $currentMonthBudgets = $budgetItems->filter(fn($b) => (int)$b->month === (int)now()->month && (int)$b->year === (int)now()->year);
+                $budgetLimit = $currentMonthBudgets->sum('limit_amount');
+                $budgetSpent = $currentMonthBudgets->sum('spent_amount');
+                $budgetProgress = $budgetLimit > 0 ? min(($budgetSpent / $budgetLimit) * 100, 100) : 0;
                 $latestTransaction = $recentItems->first();
 
                 $transactionsIndexUrl = \Illuminate\Support\Facades\Route::has('transactions.index') ? route('transactions.index') : '#';
@@ -152,14 +154,24 @@
 
                 <div class="ui-card rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Budget Terpakai</p>
-                    <div class="mt-4 flex items-center justify-between gap-4 text-sm">
-                        <span class="font-medium text-slate-500">Rp{{ number_format($monthlyExpense, 0, ',', '.') }}</span>
-                        <span class="font-semibold text-slate-700">{{ number_format($budgetProgress, 0) }}%</span>
-                    </div>
-                    <div class="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-100">
-                        <div class="h-full rounded-full {{ $budgetProgress >= 100 ? 'bg-rose-500' : ($budgetProgress >= 80 ? 'bg-amber-500' : 'bg-emerald-500') }}"
-                            style="width: {{ $budgetProgress }}%"></div>
-                    </div>
+                    @if ($budgetLimit > 0)
+                        <div class="mt-4 flex items-center justify-between gap-4 text-sm">
+                            <span class="font-medium text-slate-500">Rp{{ number_format($budgetSpent, 0, ',', '.') }} dari Rp{{ number_format($budgetLimit, 0, ',', '.') }}</span>
+                            <span class="font-semibold text-slate-700">{{ number_format($budgetProgress, 0) }}%</span>
+                        </div>
+                        <div class="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-100">
+                            <div class="h-full rounded-full {{ $budgetProgress >= 100 ? 'bg-rose-500' : ($budgetProgress >= 80 ? 'bg-amber-500' : 'bg-emerald-500') }}"
+                                style="width: {{ $budgetProgress }}%"></div>
+                        </div>
+                    @else
+                        <div class="mt-4 flex items-center justify-between gap-4 text-sm">
+                            <span class="font-medium text-slate-400 text-xs">Belum ada budget bulan ini</span>
+                            <a href="{{ $budgetUrl }}" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700">Atur Budget</a>
+                        </div>
+                        <div class="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-100">
+                            <div class="h-full rounded-full bg-slate-200" style="width: 0%"></div>
+                        </div>
+                    @endif
                 </div>
             </div>
 
