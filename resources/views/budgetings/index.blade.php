@@ -82,19 +82,20 @@
                 month: @js($initialMonthFilter),
                 year: @js($initialYearFilter),
                 budgets: @js($budgetItems->map(fn($item) => [
+                    'name' => $item->name,
                     'category' => optional($item->category)->name,
                     'month' => (string) $item->month,
                     'year' => (string) $item->year,
                 ])->values()),
-                matches(category = '', itemMonth = '', itemYear = '') {
-                    const text = `${category ?? ''} ${itemMonth ?? ''} ${itemYear ?? ''}`.toLowerCase();
+                matches(name = '', category = '', itemMonth = '', itemYear = '') {
+                    const text = `${name ?? ''} ${category ?? ''} ${itemMonth ?? ''} ${itemYear ?? ''}`.toLowerCase();
                     const matchesMonth = this.month === 'all' || this.month === itemMonth;
                     const matchesYear = this.year === '' || this.year === itemYear;
                     const matchesSearch = this.search === '' || text.includes(this.search.toLowerCase());
                     return matchesMonth && matchesYear && matchesSearch;
                 },
                 hasMatches() {
-                    return this.budgets.some(item => this.matches(item.category, item.month, item.year));
+                    return this.budgets.some(item => this.matches(item.name, item.category, item.month, item.year));
                 }
             }">
                 <div class="mb-7 flex flex-col gap-4 border-b border-slate-200 pb-6 lg:flex-row lg:items-end lg:justify-between">
@@ -189,7 +190,7 @@
 
                                 <div class="flex flex-col gap-2 sm:flex-row">
                                     <select x-model="month"
-                                        class="h-10 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100">
+                                        class="h-10 rounded-lg border border-slate-200 bg-slate-50 pl-3 pr-10 text-sm font-medium text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100">
                                         <option value="all">Semua bulan</option>
                                         @foreach ($monthLabels as $monthNumber => $monthName)
                                             <option value="{{ $monthNumber }}">{{ $monthName }}</option>
@@ -244,7 +245,7 @@
                                         @endphp
 
                                         <article
-                                            x-show="matches(@js(optional($budget->category)->name), @js((string) $budget->month), @js((string) $budget->year))"
+                                            x-show="matches(@js($budget->name), @js(optional($budget->category)->name), @js((string) $budget->month), @js((string) $budget->year))"
                                             x-transition:enter="transition ease-out duration-150"
                                             x-transition:enter-start="opacity-0 translate-y-1"
                                             x-transition:enter-end="opacity-100 translate-y-0"
@@ -264,9 +265,12 @@
 
                                                     <div class="min-w-0">
                                                         <h3 class="break-words text-lg font-semibold text-slate-950">
-                                                            {{ $budget->category->name ?? '-' }}
+                                                            {{ $budget->name }}
                                                         </h3>
-                                                        <p class="mt-1 text-sm text-slate-500">
+                                                        <p class="mt-1 text-xs text-slate-500">
+                                                            Kategori: {{ $budget->category->name ?? 'Semua Kategori' }}
+                                                        </p>
+                                                        <p class="mt-0.5 text-xs text-slate-400">
                                                             {{ $monthLabels[(int) $budget->month] ?? str_pad($budget->month, 2, '0', STR_PAD_LEFT) }} {{ $budget->year }}
                                                         </p>
                                                     </div>

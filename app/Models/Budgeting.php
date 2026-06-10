@@ -15,6 +15,7 @@ class Budgeting extends Model
     protected $fillable = [
         'user_id',
         'category_id',
+        'name',
         'limit_amount',
         'month',
         'year',
@@ -30,12 +31,16 @@ class Budgeting extends Model
         return $this->belongsTo(Category::class);
     }
 
-         public function getSpentAmountAttribute()
+    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return \App\Models\Transaction::where('user_id', $this->user_id)
-            ->where('category_id', $this->category_id)
-            ->whereMonth('transaction_date', $this->month) // Diubah ke 'transaction_date'
-            ->whereYear('transaction_date', $this->year)   // Diubah ke 'transaction_date'
-            ->sum('amount');
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function getSpentAmountAttribute()
+    {
+        if ($this->relationLoaded('transactions')) {
+            return $this->transactions->sum('amount');
+        }
+        return $this->transactions()->sum('amount');
     }
 }

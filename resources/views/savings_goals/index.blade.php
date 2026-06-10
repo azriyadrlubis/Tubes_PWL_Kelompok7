@@ -168,9 +168,9 @@
                                     />
                                 </div>
 
-                                <div class="flex flex-col gap-2 sm:flex-row">
+                                <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
                                     <select x-model="status"
-                                        class="h-10 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100">
+                                        class="h-10 w-full min-w-[150px] shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100">
                                         <option value="all">Semua status</option>
                                         <option value="active">Aktif</option>
                                         <option value="completed">Selesai</option>
@@ -178,7 +178,7 @@
                                     </select>
 
                                     <select x-model="accountId"
-                                        class="h-10 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100">
+                                        class="h-10 w-full min-w-[150px] shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100">
                                         <option value="all">Semua akun</option>
                                         @foreach ($accountsForFilter as $acc)
                                             <option value="{{ $acc->id }}">{{ $acc->name }}</option>
@@ -280,10 +280,10 @@
                                                     </p>
                                                 </div>
 
-                                                <div class="rounded-lg bg-slate-50 p-3 ring-1 ring-slate-200">
-                                                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Sisa</p>
-                                                    <p class="mt-2 text-sm font-bold {{ $goal->target_amount - $goal->current_amount <= 0 ? 'text-emerald-700' : 'text-slate-950' }}">
-                                                        Rp{{ number_format(max(0, $goal->target_amount - $goal->current_amount), 0, ',', '.') }}
+                                                <div class="rounded-lg bg-sky-50 p-3 ring-1 ring-sky-100">
+                                                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-sky-600">Transaksi</p>
+                                                    <p class="mt-2 text-sm font-bold text-sky-700">
+                                                        {{ $goal->transactions->count() }}
                                                     </p>
                                                 </div>
                                             </div>

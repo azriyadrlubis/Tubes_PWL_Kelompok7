@@ -1,4 +1,4 @@
-@props(['categories', 'selectedCategoryId' => null, 'name' => 'category_id'])
+@props(['categories', 'selectedCategoryId' => null, 'name' => 'category_id', 'allowNull' => false])
 
 <div x-data="categorySelectorData()" class="w-full">
     <!-- Hidden input for form -->
@@ -6,8 +6,8 @@
 
     <!-- Button to open modal -->
     <button type="button" @click="open = true" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 transition-colors text-left bg-white hover:bg-gray-50">
-        <span x-show="selectedId" x-text="selectedCategoryName" class="text-gray-900"></span>
-        <span x-show="!selectedId" class="text-gray-500">Pilih Kategori</span>
+        <span x-show="selectedId || allowNull" x-text="selectedCategoryName" class="text-gray-900"></span>
+        <span x-show="!selectedId && !allowNull" class="text-gray-500">Pilih Kategori</span>
     </button>
 
     <!-- Modal -->
@@ -45,6 +45,24 @@
 
             <!-- Categories List -->
             <div class="overflow-y-auto max-h-[50vh] sm:max-h-[60vh]">
+                <div x-show="allowNull">
+                    <button type="button" @click="selectCategory({id: '', name: 'Tanpa Kategori'})" :class="selectedId === '' || selectedId === null ? 'bg-green-50 border-l-4 border-green-600' : 'hover:bg-gray-50'" class="w-full flex items-center gap-3 px-4 sm:px-6 py-3.5 border-b border-gray-100 transition text-left">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0 text-slate-500">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-slate-900 font-medium">Tanpa Kategori (Semua Kategori)</p>
+                        </div>
+                        <div x-show="selectedId === '' || selectedId === null" class="text-green-600">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+
                 <template x-for="category in filteredCategories" :key="category.id">
                     <button type="button" @click="selectCategory(category)" :class="selectedId == category.id ? 'bg-green-50 border-l-4 border-green-600' : 'hover:bg-gray-50'" class="w-full flex items-center gap-3 px-4 sm:px-6 py-3.5 border-b border-gray-100 transition text-left">
                         <!-- Icon -->
@@ -90,8 +108,9 @@ function categorySelectorData() {
         activeTab: 'expense',
         search: '',
         selectedId: @json($selectedCategoryId),
-        selectedCategoryName: '',
+        selectedCategoryName: 'Pilih Kategori',
         categories: @json($categories),
+        allowNull: @json($allowNull),
 
         get filteredCategories() {
             return this.categories.filter(cat => {
@@ -140,6 +159,7 @@ function categorySelectorData() {
         selectCategory(category) {
             this.selectedId = category.id;
             this.selectedCategoryName = category.name;
+            this.open = false;
         },
 
         confirmSelection() {
@@ -150,12 +170,18 @@ function categorySelectorData() {
             const cat = this.categories.find(c => c.id == this.selectedId);
             if (cat) {
                 this.selectedCategoryName = cat.name;
+            } else if (this.allowNull && (this.selectedId === '' || this.selectedId === null)) {
+                this.selectedCategoryName = 'Tanpa Kategori';
+            } else {
+                this.selectedCategoryName = 'Pilih Kategori';
             }
         },
 
         init() {
             if (this.selectedId) {
                 this.updateSelectedCategory();
+            } else if (this.allowNull) {
+                this.selectedCategoryName = 'Tanpa Kategori';
             }
         }
     }
