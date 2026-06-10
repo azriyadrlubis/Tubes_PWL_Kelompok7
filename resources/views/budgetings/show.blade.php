@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('content')
 <div class="min-h-screen bg-[#f6f7f9]">
@@ -9,9 +9,10 @@
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Detail Budget</p>
                     <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-                        {{ $budgeting->category->name ?? '-' }}
+                        {{ $budgeting->name }}
                     </h1>
                     <p class="mt-2 text-sm leading-6 text-slate-600">
+                        Kategori: {{ $budgeting->category->name ?? 'Semua Kategori' }} | 
                         Kelola budget untuk {{ ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][$budgeting->month] ?? '-' }} {{ $budgeting->year }}
                     </p>
                 </div>
@@ -80,7 +81,7 @@
                         </div>
                         <div>
                             <p class="text-sm text-slate-600">Kategori Pengeluaran</p>
-                            <p class="text-lg font-semibold text-slate-900">{{ $budgeting->category->name ?? '-' }}</p>
+                            <p class="text-lg font-semibold text-slate-900">{{ $budgeting->category->name ?? 'Semua Kategori (Umum)' }}</p>
                         </div>
                     </div>
                 </div>
