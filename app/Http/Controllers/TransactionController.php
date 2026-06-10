@@ -60,7 +60,11 @@ class TransactionController extends Controller
 
         $tags = auth()->user()->tags ?? collect();
 
-        return view('transactions.create', compact('accounts', 'categories', 'tags'));
+        $budgets = \App\Models\Budgeting::where('user_id', $userId)
+            ->orderBy('name')
+            ->get();
+
+        return view('transactions.create', compact('accounts', 'categories', 'tags', 'budgets'));
     }
 
     public function createRecurring()
@@ -238,7 +242,11 @@ class TransactionController extends Controller
 
         $tags = auth()->user()->tags ?? collect();
 
-        return view('transactions.edit', compact('transaction', 'accounts', 'categories', 'tags'));
+        $budgets = \App\Models\Budgeting::where('user_id', auth()->id())
+            ->orderBy('name')
+            ->get();
+
+        return view('transactions.edit', compact('transaction', 'accounts', 'categories', 'tags', 'budgets'));
     }
 
     public function update(UpdateTransactionRequest $request, Transaction $transaction)

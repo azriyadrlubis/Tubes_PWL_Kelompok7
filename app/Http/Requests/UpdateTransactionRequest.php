@@ -17,6 +17,7 @@ class UpdateTransactionRequest extends FormRequest
         return [
             'account_id' => 'required|exists:accounts,id',
             'category_id' => 'required|exists:categories,id',
+            'budgeting_id' => 'nullable|exists:budgetings,id',
             'type' => 'required|in:income,expense',
             'amount' => 'required|numeric|min:0.01',
             'title' => 'required|string|max:150',

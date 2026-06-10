@@ -39,12 +39,13 @@ class BudgetingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'category_id' => ['required', 'exists:categories,id', 'integer'],
+            'name' => ['required', 'string', 'max:150'],
+            'category_id' => ['nullable', 'exists:categories,id', 'integer'],
             'limit_amount' => ['required', 'numeric', 'min:0.01'],
             'month' => ['required', 'integer', 'min:1', 'max:12'],
             'year' => ['required', 'integer', 'min:2020', 'max:2100'],
         ], [
-            'category_id.required' => 'Pilih kategori terlebih dahulu.',
+            'name.required' => 'Masukkan nama budget.',
             'category_id.exists' => 'Kategori yang dipilih tidak ditemukan.',
             'limit_amount.required' => 'Masukkan jumlah limit budget.',
             'limit_amount.min' => 'Limit budget minimal Rp 0.01.',
@@ -78,12 +79,13 @@ class BudgetingController extends Controller
         $this->authorize('update', $budgeting);
 
         $validated = $request->validate([
-            'category_id' => ['required', 'exists:categories,id', 'integer'],
+            'name' => ['required', 'string', 'max:150'],
+            'category_id' => ['nullable', 'exists:categories,id', 'integer'],
             'limit_amount' => ['required', 'numeric', 'min:0.01'],
             'month' => ['required', 'integer', 'min:1', 'max:12'],
             'year' => ['required', 'integer', 'min:2020', 'max:2100'],
         ], [
-            'category_id.required' => 'Pilih kategori terlebih dahulu.',
+            'name.required' => 'Masukkan nama budget.',
             'category_id.exists' => 'Kategori yang dipilih tidak ditemukan.',
             'limit_amount.required' => 'Masukkan jumlah limit budget.',
             'limit_amount.min' => 'Limit budget minimal Rp 0.01.',
