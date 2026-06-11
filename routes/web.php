@@ -99,6 +99,7 @@ Route::middleware(['auth', 'verified', 'auditor'])->prefix('auditor')->name('aud
     Route::get('/dashboard', [AuditorController::class, 'dashboard'])->name('dashboard');
     Route::get('/categories', [AuditorController::class, 'categories'])->name('categories.index');
     Route::post('/categories', [AuditorController::class, 'storeCategory'])->name('categories.store');
+    Route::delete('/categories/{category}', [AuditorController::class, 'destroyCategory'])->name('categories.destroy');
     Route::get('/tags', [AuditorController::class, 'tags'])->name('tags.index');
     Route::delete('/tags/{tag}', [AuditorController::class, 'destroyTag'])->name('tags.destroy');
 });

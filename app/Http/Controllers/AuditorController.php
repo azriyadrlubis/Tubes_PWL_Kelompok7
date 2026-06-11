@@ -61,6 +61,18 @@ class AuditorController extends Controller
     }
 
     /**
+     * Menghapus kategori global dari database.
+     */
+    public function destroyCategory(Category $category)
+    {
+        $name = $category->name;
+        $category->delete();
+
+        return redirect()->route('auditor.categories.index')
+            ->with('success', 'Kategori global (SDGs) "' . $name . '" berhasil dihapus.');
+    }
+
+    /**
      * Halaman moderasi seluruh tag sistem.
      */
     public function tags()
