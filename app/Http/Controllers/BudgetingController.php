@@ -91,19 +91,8 @@ class BudgetingController extends Controller
     {
         $this->authorize('update', $budgeting);
 
-        // DEBUG: Log incoming values
-        $originalLimit = $request->input('limit_amount');
-        \Log::info('Budgeting.update - Raw input values', [
-            'limit_amount_raw' => $originalLimit,
-            'limit_type' => gettype($originalLimit),
-        ]);
-
         if ($request->has('limit_amount')) {
             $normalized = $this->normalizeCurrencyInput($request->input('limit_amount'));
-            \Log::info('Budgeting.update - Normalized limit_amount', [
-                'raw' => $originalLimit,
-                'normalized' => $normalized,
-            ]);
             $request->merge([
                 'limit_amount' => $normalized,
             ]);

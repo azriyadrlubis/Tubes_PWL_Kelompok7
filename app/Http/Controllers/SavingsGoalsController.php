@@ -91,32 +91,14 @@ class SavingsGoalsController extends Controller
     {
         $savingsGoal = SavingsGoals::where('user_id', Auth::id())->findOrFail($id);
 
-        // DEBUG: Log incoming values
-        $originalTarget = $request->input('target_amount');
-        $originalCurrent = $request->input('current_amount');
-        \Log::info('SavingsGoals.update - Raw input values', [
-            'target_amount_raw' => $originalTarget,
-            'current_amount_raw' => $originalCurrent,
-            'target_type' => gettype($originalTarget),
-            'current_type' => gettype($originalCurrent),
-        ]);
-
         if ($request->has('target_amount')) {
             $normalized = $this->normalizeCurrencyInput($request->input('target_amount'));
-            \Log::info('SavingsGoals.update - Normalized target_amount', [
-                'raw' => $originalTarget,
-                'normalized' => $normalized,
-            ]);
             $request->merge([
                 'target_amount' => $normalized,
             ]);
         }
         if ($request->has('current_amount')) {
             $normalized = $this->normalizeCurrencyInput($request->input('current_amount'));
-            \Log::info('SavingsGoals.update - Normalized current_amount', [
-                'raw' => $originalCurrent,
-                'normalized' => $normalized,
-            ]);
             $request->merge([
                 'current_amount' => $normalized,
             ]);
