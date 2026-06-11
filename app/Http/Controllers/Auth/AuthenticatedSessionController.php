@@ -24,21 +24,21 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // Cek secara proaktif sebelum otentikasi dijalankan
+        $email = $request->input('email');
+        $preCheckUser = \App\Models\User::where('email', $email)->first();
+
+        if ($preCheckUser && $preCheckUser->isAuditor()) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'email' => 'Akun ini terdaftar sebagai Auditor. Silakan login melalui portal Auditor.',
+            ]);
+        }
+
         $request->authenticate();
 
         $request->session()->regenerate();
 
         $user = Auth::user();
-
-        // Cek jika akun adalah auditor, blokir dari login biasa
-        if ($user->isAuditor()) {
-            Auth::guard('web')->logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                'email' => 'Akun ini terdaftar sebagai Auditor. Silakan login melalui portal Auditor.',
-            ]);
-        }
 
         if (! $user->onboarding_completed) {
             return redirect()->route('onboarding');

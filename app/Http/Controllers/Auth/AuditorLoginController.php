@@ -29,24 +29,19 @@ class AuditorLoginController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
-            $request->session()->regenerate();
+        // Cek secara proaktif jika email terdaftar tapi bukan auditor
+        $email = $request->input('email');
+        $preCheckUser = \App\Models\User::where('email', $email)->first();
 
-            $user = Auth::user();
-
-            // Cek apakah user memiliki hak akses auditor
-            if ($user->isAuditor()) {
-                return redirect()->intended(route('auditor.dashboard', absolute: false));
-            }
-
-            // Jika bukan auditor, segera keluarkan dan lempar error
-            Auth::guard('web')->logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-
+        if ($preCheckUser && !$preCheckUser->isAuditor()) {
             throw ValidationException::withMessages([
                 'email' => 'Akses ditolak. Halaman login ini hanya dikhususkan untuk akun Auditor.',
             ]);
+        }
+
+        if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('auditor.dashboard', absolute: false));
         }
 
         throw ValidationException::withMessages([
