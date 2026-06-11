@@ -1,94 +1,193 @@
 @extends('layouts.app')
 
+@push('head')
+<style>
+    @keyframes soft-enter {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .ui-reveal {
+            animation: soft-enter .42s ease-out both;
+        }
+
+        .ui-card {
+            transition:
+                transform .18s ease,
+                box-shadow .18s ease,
+                border-color .18s ease,
+                background-color .18s ease,
+                color .18s ease;
+        }
+
+        .ui-card:hover {
+            transform: translateY(-2px);
+        }
+    }
+</style>
+@endpush
+
 @section('content')
-<div class="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-    <!-- Header -->
-    <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Dashboard Auditor</h1>
-            <p class="text-sm text-slate-500 mt-1">Financial & Content Quality Assurance System</p>
-        </div>
-        <div class="bg-emerald-50 border border-emerald-200 rounded-2xl px-4 py-2 flex items-center gap-2">
-            <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span class="text-xs font-semibold text-emerald-800">Mode Auditor Aktif</span>
-        </div>
-    </div>
-
-    <!-- Alert Success -->
-    @if(session('success'))
-        <div class="mb-6 p-4 bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 rounded-r-xl shadow-sm flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <svg class="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p class="text-sm font-medium">{{ session('success') }}</p>
-            </div>
-        </div>
-    @endif
-
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <!-- Card 1: Users -->
-        <div class="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-5">
-            <div class="p-4 bg-blue-50 text-blue-600 rounded-2xl">
-                <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-            </div>
+<div class="min-h-screen bg-[#f6f7f9] text-slate-900">
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
+        
+        <!-- Header -->
+        <div class="mb-7 flex flex-col gap-4 border-b border-slate-200 pb-6 lg:flex-row lg:items-end lg:justify-between ui-reveal">
             <div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Masyarakat</p>
-                <p class="text-3xl font-extrabold text-slate-800 mt-1">{{ number_format($totalUsers, 0, ',', '.') }}</p>
-                <p class="text-xs text-slate-500 mt-1">Pengguna aktif terdaftar</p>
+                <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Overview Panel</p>
+                <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">Dashboard Auditor</h1>
+                <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                    Sistem pemantauan keuangan, integrasi kategori global SDGs, dan moderasi konten transaksi.
+                </p>
+            </div>
+            <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-200/60 rounded-full px-4 py-2 self-start lg:self-auto shadow-sm">
+                <span class="inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs font-semibold text-emerald-800">Sistem Keamanan Aktif</span>
             </div>
         </div>
 
-        <!-- Card 2: Transactions -->
-        <div class="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-5">
-            <div class="p-4 bg-amber-50 text-amber-600 rounded-2xl">
-                <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
+        <!-- Alert Success -->
+        @if(session('success'))
+            <div class="mb-6 p-4 bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 rounded-r-xl shadow-sm flex items-center justify-between ui-reveal">
+                <div class="flex items-center gap-3">
+                    <svg class="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-sm font-medium">{{ session('success') }}</p>
+                </div>
             </div>
-            <div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Transaksi</p>
-                <p class="text-3xl font-extrabold text-slate-800 mt-1">{{ number_format($totalTransactions, 0, ',', '.') }}</p>
-                <p class="text-xs text-slate-500 mt-1">Transaksi tercatat di sistem</p>
+        @endif
+
+        <!-- Premium Dark Overview Card (Styled exactly like user's Total Balance card) -->
+        <div class="ui-reveal mb-8 block overflow-hidden rounded-3xl bg-slate-950 p-6 text-white shadow-lg shadow-slate-900/10 transition duration-150">
+            <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Total SDGs Savings Pool</p>
+                    <p class="mt-3 text-3xl font-bold tracking-tight sm:text-5xl">
+                        Rp {{ number_format($globalSavings, 0, ',', '.') }}
+                    </p>
+                </div>
+
+                <div class="rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 self-start md:self-auto">
+                    <p class="text-xs text-slate-400">Waktu Server</p>
+                    <p class="mt-1 text-sm font-semibold text-white">
+                        {{ now()->format('d M Y, H:i') }} WIB
+                    </p>
+                </div>
+            </div>
+
+            <!-- Stats Sub-metrics in dark card -->
+            <div class="mt-7 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-5">
+                    <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Total Masyarakat</p>
+                    <p class="mt-2 text-2xl font-bold text-blue-300">
+                        {{ number_format($totalUsers, 0, ',', '.') }}
+                    </p>
+                    <p class="text-[10px] text-slate-400 mt-1">Pengguna terdaftar</p>
+                </div>
+
+                <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-5">
+                    <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Total Transaksi</p>
+                    <p class="mt-2 text-2xl font-bold text-amber-300">
+                        {{ number_format($totalTransactions, 0, ',', '.') }}
+                    </p>
+                    <p class="text-[10px] text-slate-400 mt-1">Tercatat di sistem</p>
+                </div>
+
+                <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-5 sm:col-span-2 md:col-span-1">
+                    <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Kategori Global SDGs</p>
+                    <p class="mt-2 text-2xl font-bold text-emerald-300">
+                        Active
+                    </p>
+                    <p class="text-[10px] text-slate-400 mt-1">Skema SGD Terintegrasi</p>
+                </div>
             </div>
         </div>
 
-        <!-- Card 3: Savings Goals -->
-        <div class="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm hover:shadow-md transition duration-200 flex items-center gap-5">
-            <div class="p-4 bg-emerald-50 text-emerald-600 rounded-2xl">
-                <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16v1M3 12a9 9 0 1118 0 9 9 0 01-18 0z" />
-                </svg>
+        <!-- Moderation Modules Grid (Clean, professional cards with lift effects) -->
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 ui-reveal">
+            
+            <!-- Module 1: Categories -->
+            <div class="ui-card flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:border-slate-300 hover:shadow-md transition">
+                <div>
+                    <div class="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900">Moderasi Kategori</h3>
+                    <p class="mt-2 text-sm text-slate-500 leading-relaxed">
+                        Kelola data kategori global SDGs yang digunakan oleh seluruh masyarakat. Pisahkan, buat, dan bersihkan secara sistem-wide.
+                    </p>
+                </div>
+                <div class="mt-6">
+                    <a href="{{ route('auditor.categories.index') }}" 
+                        class="inline-flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 transition">
+                        <span>Buka Manajemen Kategori</span>
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
             </div>
-            <div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Tabungan Global</p>
-                <p class="text-3xl font-extrabold text-slate-800 mt-1">Rp {{ number_format($globalSavings, 0, ',', '.') }}</p>
-                <p class="text-xs text-slate-500 mt-1">Total akumulasi tabungan saat ini</p>
-            </div>
-        </div>
-    </div>
 
-    <!-- Welcome / Info Widget -->
-    <div class="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
-        <div class="space-y-2">
-            <h2 class="text-2xl font-bold text-slate-800">Selamat datang kembali, Auditor!</h2>
-            <p class="text-sm text-slate-500 max-w-xl">
-                Gunakan panel navigasi di sebelah kiri untuk melakukan moderasi terhadap Kategori Global SDGs dan memantau konten tag yang dibuat oleh pengguna.
-            </p>
+            <!-- Module 2: Tags -->
+            <div class="ui-card flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:border-slate-300 hover:shadow-md transition">
+                <div>
+                    <div class="h-12 w-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900">Moderasi Tag</h3>
+                    <p class="mt-2 text-sm text-slate-500 leading-relaxed">
+                        Pantau seluruh hashtag transaksi buatan pengguna. Bersihkan tag yang tidak sesuai dengan pedoman konten sistem keuangan.
+                    </p>
+                </div>
+                <div class="mt-6">
+                    <a href="{{ route('auditor.tags.index') }}" 
+                        class="inline-flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 transition">
+                        <span>Buka Moderasi Tag</span>
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Module 3: SDG Health status -->
+            <div class="ui-card flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:border-slate-300 hover:shadow-md transition sm:col-span-2 lg:col-span-1">
+                <div>
+                    <div class="h-12 w-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900">SDGs Goal Health</h3>
+                    <p class="mt-2 text-sm text-slate-500 leading-relaxed">
+                        Integrasi 17 target Pembangunan Berkelanjutan (SDGs) berjalan optimal. Kategori global terdistribusi merata ke seluruh masyarakat.
+                    </p>
+                </div>
+                <div class="mt-6">
+                    <div class="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/50 p-4">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+                            <span class="text-xs font-semibold text-slate-700">Database Connection</span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-500">100% Online</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <div class="flex gap-4">
-            <a href="{{ route('auditor.categories.index') }}"
-                class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-5 rounded-2xl shadow-sm transition duration-150 text-sm">
-                Moderasi Kategori
-            </a>
-            <a href="{{ route('auditor.tags.index') }}"
-                class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 px-5 rounded-2xl transition duration-150 text-sm">
-                Moderasi Tag
-            </a>
-        </div>
+
     </div>
 </div>
 @endsection
