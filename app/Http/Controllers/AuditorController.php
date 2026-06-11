@@ -41,6 +41,14 @@ class AuditorController extends Controller
     }
 
     /**
+     * Tampilkan Form Pembuatan Kategori Global Baru.
+     */
+    public function createCategory()
+    {
+        return view('auditor.create_category');
+    }
+
+    /**
      * Menyimpan kategori global baru (SDGs) dengan user_id = null.
      */
     public function storeCategory(Request $request)
