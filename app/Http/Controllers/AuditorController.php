@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 class AuditorController extends Controller
 {
     /**
-     * Tampilkan Dashboard Auditor dengan data statistik dan pengelolaan kategori global.
+     * Tampilkan Dashboard Auditor dengan data statistik.
      */
     public function dashboard()
     {
@@ -20,17 +20,24 @@ class AuditorController extends Controller
         $totalTransactions = Transaction::count();
         $globalSavings = SavingsGoals::sum('current_amount');
 
+        return view('auditor.dashboard', compact(
+            'totalUsers',
+            'totalTransactions',
+            'globalSavings'
+        ));
+    }
+
+    /**
+     * Tampilkan Halaman Moderasi Kategori Global (SDGs).
+     */
+    public function categories()
+    {
         // Ambil semua kategori global (user_id IS NULL)
         $globalCategories = Category::whereNull('user_id')
             ->orderBy('name')
             ->get();
 
-        return view('auditor.dashboard', compact(
-            'totalUsers',
-            'totalTransactions',
-            'globalSavings',
-            'globalCategories'
-        ));
+        return view('auditor.categories', compact('globalCategories'));
     }
 
     /**
@@ -50,7 +57,7 @@ class AuditorController extends Controller
 
         Category::create(array_merge($data, ['user_id' => null]));
 
-        return redirect()->route('auditor.dashboard')->with('success', 'Kategori global (SDGs) berhasil ditambahkan.');
+        return redirect()->route('auditor.categories.index')->with('success', 'Kategori global (SDGs) berhasil ditambahkan.');
     }
 
     /**

@@ -120,6 +120,14 @@
                             <span>Dashboard Auditor</span>
                         </a>
 
+                        <a href="{{ route('auditor.categories.index') }}"
+                            class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('auditor.categories.*') ? 'bg-emerald-100 text-emerald-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" />
+                            </svg>
+                            <span>Moderasi Kategori</span>
+                        </a>
+
                         <a href="{{ route('auditor.tags.index') }}"
                             class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('auditor.tags.*') ? 'bg-emerald-100 text-emerald-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
