@@ -212,7 +212,7 @@
                                                 {{ $selectedAccount ? ucfirst($selectedAccount->type) : $accounts->count() . ' akun' }}
                                             </span>
                                         </div>
-                                        <p class="text-xs text-slate-500 mt-1">Saldo: Rp {{ $balanceLabel }}</p>
+                                        <p class="text-xs text-slate-500 mt-1">Saldo: {{ $currencySymbol }} {{ $balanceLabel }}</p>
                                     </div>
                                     <svg class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24"
                                         stroke="currentColor">
@@ -258,7 +258,7 @@
                                                     <p class="text-sm font-semibold text-slate-900">
                                                         {{ $account->name }}</p>
                                                     <p class="text-xs text-slate-500">
-                                                        {{ ucfirst($account->type) }} · Rp {{ number_format($account->balance, 0, ',', '.') }}
+                                                        {{ ucfirst($account->type) }} · {{ $currencySymbol }} {{ number_format($account->balance, 0, ',', '.') }}
                                                     </p>
                                                 </div>
                                                 @if (optional($selectedAccount)->id === $account->id)

@@ -20,6 +20,7 @@ class AuditorSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => 'auditor',
                 'onboarding_completed' => true,
+                'currency' => 'IDR',
                 'email_verified_at' => now(),
             ]
         );

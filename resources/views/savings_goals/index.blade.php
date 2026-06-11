@@ -109,14 +109,14 @@
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Total Target Goal</p>
                                 <p class="mt-3 text-3xl font-bold tracking-tight sm:text-5xl">
-                                    Rp{{ number_format($totalTarget, 0, ',', '.') }}
+                                    {{ $currencySymbol }}{{ number_format($totalTarget, 0, ',', '.') }}
                                 </p>
                             </div>
 
                             <div class="rounded-lg border border-white/10 bg-white/[0.06] px-4 py-3">
                                 <p class="text-xs text-slate-400">Total Terkumpul</p>
                                 <p class="mt-1 text-sm font-semibold text-white">
-                                    Rp{{ number_format($totalSaved, 0, ',', '.') }}
+                                    {{ $currencySymbol }}{{ number_format($totalSaved, 0, ',', '.') }}
                                 </p>
                             </div>
                         </div>
@@ -136,7 +136,7 @@
                         <div class="ui-card rounded-lg border border-slate-200 bg-white p-5 shadow-sm min-w-0">
                             <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Sisa Target</p>
                             <p class="mt-3 text-2xl font-bold {{ $totalRemaining <= 0 ? 'text-emerald-700' : 'text-sky-700' }} break-all">
-                                Rp{{ number_format($totalRemaining, 0, ',', '.') }}
+                                {{ $currencySymbol }}{{ number_format($totalRemaining, 0, ',', '.') }}
                             </p>
                         </div>
 
@@ -269,14 +269,14 @@
                                                 <div class="rounded-lg bg-slate-50 p-3 ring-1 ring-slate-200 min-w-0">
                                                     <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Saat Ini</p>
                                                     <p class="mt-2 text-xs sm:text-sm font-bold text-slate-950 break-all">
-                                                        Rp{{ number_format($goal->current_amount, 0, ',', '.') }}
+                                                        {{ $currencySymbol }}{{ number_format($goal->current_amount, 0, ',', '.') }}
                                                     </p>
                                                 </div>
 
                                                 <div class="rounded-lg bg-slate-50 p-3 ring-1 ring-slate-200 min-w-0">
                                                     <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Target</p>
                                                     <p class="mt-2 text-xs sm:text-sm font-bold text-slate-950 break-all">
-                                                        Rp{{ number_format($goal->target_amount, 0, ',', '.') }}
+                                                        {{ $currencySymbol }}{{ number_format($goal->target_amount, 0, ',', '.') }}
                                                     </p>
                                                 </div>
 
