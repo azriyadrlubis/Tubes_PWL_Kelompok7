@@ -42,10 +42,13 @@ class SavingsGoalsController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'target_amount' => 'required|numeric|min:0',
-            'current_amount' => 'nullable|numeric|min:0',
+            'target_amount' => 'required|numeric|min:0|max:9999999999999',
+            'current_amount' => 'nullable|numeric|min:0|max:9999999999999',
             'deadline' => 'nullable|date|after:today',
             'account_id' => 'nullable|exists:accounts,id',
+        ], [
+            'target_amount.max' => 'Angka yang dimasukkan terlalu besar.',
+            'current_amount.max' => 'Angka yang dimasukkan terlalu besar.',
         ]);
 
         // Verify account belongs to user
@@ -121,10 +124,13 @@ class SavingsGoalsController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'target_amount' => 'required|numeric|min:0',
-            'current_amount' => 'nullable|numeric|min:0',
+            'target_amount' => 'required|numeric|min:0|max:9999999999999',
+            'current_amount' => 'nullable|numeric|min:0|max:9999999999999',
             'deadline' => 'nullable|date|after:today',
             'account_id' => 'nullable|exists:accounts,id',
+        ], [
+            'target_amount.max' => 'Angka yang dimasukkan terlalu besar.',
+            'current_amount.max' => 'Angka yang dimasukkan terlalu besar.',
         ]);
 
         // Verify account belongs to user
