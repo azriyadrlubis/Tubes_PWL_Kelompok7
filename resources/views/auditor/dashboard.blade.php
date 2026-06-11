@@ -175,7 +175,7 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800">
+                            <span class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold" style="background-color: #d1fae5; color: #065f46;">
                                 {{ $pctAchieved }}%
                             </span>
                         </div>
@@ -191,7 +191,7 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <span class="inline-flex items-center gap-1 rounded-full bg-slate-200 px-3 py-1 text-xs font-bold text-slate-700">
+                            <span class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold" style="background-color: #e2e8f0; color: #334155;">
                                 {{ $pctInProgress }}%
                             </span>
                         </div>
@@ -207,7 +207,7 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <span class="inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-800">
+                            <span class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold" style="background-color: #fee2e2; color: #991b1b;">
                                 {{ $pctEmpty }}%
                             </span>
                         </div>
