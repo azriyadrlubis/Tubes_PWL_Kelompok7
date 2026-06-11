@@ -30,6 +30,7 @@ class OnboardingController extends Controller
             'balance' => $request->initial_balance,
         ]);
 
+        $user->currency = $request->currency;
         $user->onboarding_completed = true;
         $user->save();
 
