@@ -18,16 +18,38 @@ class AuditorController extends Controller
     {
         $totalUsers = User::where('role', 'user')->count();
         $totalTransactions = Transaction::count();
-        $totalAchievedSavings = SavingsGoals::where('status', 'completed')
-            ->orWhereColumn('current_amount', '>=', 'target_amount')
-            ->count();
         $globalCategoriesCount = Category::whereNull('user_id')->count();
+
+        // Savings Goals breakdown for donut chart
+        $savingsAchieved  = SavingsGoals::where(function ($q) {
+            $q->where('status', 'completed')
+              ->orWhereColumn('current_amount', '>=', 'target_amount');
+        })->count();
+
+        $savingsEmpty = SavingsGoals::where('current_amount', '<=', 0)
+            ->where(function ($q) {
+                $q->where('status', '!=', 'completed')
+                  ->whereColumn('current_amount', '<', 'target_amount');
+            })->count();
+
+        $savingsInProgress = SavingsGoals::where('current_amount', '>', 0)
+            ->where(function ($q) {
+                $q->where('status', '!=', 'completed')
+                  ->whereColumn('current_amount', '<', 'target_amount');
+            })->count();
+
+        $totalAchievedSavings = $savingsAchieved;
+        $totalSavingsGoals = $savingsAchieved + $savingsEmpty + $savingsInProgress;
 
         return view('auditor.dashboard', compact(
             'totalUsers',
             'totalTransactions',
             'totalAchievedSavings',
-            'globalCategoriesCount'
+            'globalCategoriesCount',
+            'savingsAchieved',
+            'savingsInProgress',
+            'savingsEmpty',
+            'totalSavingsGoals'
         ));
     }
 

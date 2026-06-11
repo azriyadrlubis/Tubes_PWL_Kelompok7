@@ -120,6 +120,69 @@
             </div>
         </div>
 
+        <!-- Donut Chart: Savings Goals Ratio -->
+        @php
+            $total = $totalSavingsGoals > 0 ? $totalSavingsGoals : 1;
+            $pctAchieved    = round($savingsAchieved   / $total * 100, 1);
+            $pctInProgress  = round($savingsInProgress / $total * 100, 1);
+            $pctEmpty       = round(100 - $pctAchieved - $pctInProgress, 1);
+        @endphp
+        <div class="ui-reveal mb-8 bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6">
+            <div class="mb-6 flex flex-col gap-1">
+                <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Analitik Tabungan</p>
+                <h2 class="text-xl font-bold text-slate-900">Rasio Target Savings Goals</h2>
+                <p class="text-sm text-slate-500 leading-relaxed">Distribusi status tabungan seluruh masyarakat berdasarkan pencapaian target.</p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row items-center gap-10">
+                <!-- Donut Canvas -->
+                <div class="relative flex-shrink-0 flex items-center justify-center" style="width:220px;height:220px;">
+                    <canvas id="savingsDonutChart" width="220" height="220"></canvas>
+                    <!-- Centre label -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <p class="text-3xl font-bold text-slate-900">{{ $totalSavingsGoals }}</p>
+                        <p class="text-xs text-slate-500 font-semibold mt-0.5">Total Goals</p>
+                    </div>
+                </div>
+
+                <!-- Legend & Stats -->
+                <div class="flex-1 w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Achieved -->
+                    <div class="flex flex-col justify-between rounded-2xl border border-emerald-100 bg-emerald-50/60 p-5">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="inline-block h-3 w-3 rounded-full bg-emerald-500 flex-shrink-0"></span>
+                            <span class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Tercapai</span>
+                        </div>
+                        <p class="text-3xl font-bold text-emerald-700">{{ $pctAchieved }}<span class="text-lg font-semibold">%</span></p>
+                        <p class="text-xs text-emerald-600 mt-1 font-medium">{{ $savingsAchieved }} goal terpenuhi</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">current_amount ≥ target</p>
+                    </div>
+
+                    <!-- In Progress -->
+                    <div class="flex flex-col justify-between rounded-2xl border border-slate-200 bg-slate-50/60 p-5">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="inline-block h-3 w-3 rounded-full bg-slate-400 flex-shrink-0"></span>
+                            <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Berjalan</span>
+                        </div>
+                        <p class="text-3xl font-bold text-slate-700">{{ $pctInProgress }}<span class="text-lg font-semibold">%</span></p>
+                        <p class="text-xs text-slate-600 mt-1 font-medium">{{ $savingsInProgress }} goal aktif</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">Sebagian sudah terkumpul</p>
+                    </div>
+
+                    <!-- Empty -->
+                    <div class="flex flex-col justify-between rounded-2xl border border-red-100 bg-red-50/60 p-5">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="inline-block h-3 w-3 rounded-full bg-red-400 flex-shrink-0"></span>
+                            <span class="text-xs font-semibold text-red-600 uppercase tracking-wider">Belum Mulai</span>
+                        </div>
+                        <p class="text-3xl font-bold text-red-600">{{ $pctEmpty }}<span class="text-lg font-semibold">%</span></p>
+                        <p class="text-xs text-red-500 mt-1 font-medium">{{ $savingsEmpty }} goal kosong</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">Tabungan masih Rp 0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Moderation Modules Grid (Clean, professional cards with lift effects) -->
         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 ui-reveal">
             
@@ -200,3 +263,61 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('savingsDonutChart').getContext('2d');
+        
+        const achievedVal = {{ $savingsAchieved }};
+        const progressVal = {{ $savingsInProgress }};
+        const emptyVal = {{ $savingsEmpty }};
+        const totalVal = {{ $totalSavingsGoals }};
+
+        // If there are no savings goals at all, show a default grey chart so it doesn't look broken
+        const dataValues = totalVal === 0 ? [0, 0, 0, 1] : [achievedVal, progressVal, emptyVal];
+        const bgColors = totalVal === 0 ? ['#f1f5f9'] : ['#10b981', '#94a3b8', '#ef4444'];
+        const hoverBgColors = totalVal === 0 ? ['#f1f5f9'] : ['#059669', '#64748b', '#dc2626'];
+        const labels = totalVal === 0 ? ['Tidak Ada Goal'] : ['Tercapai', 'Berjalan', 'Belum Mulai'];
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: dataValues,
+                    backgroundColor: bgColors,
+                    hoverBackgroundColor: hoverBgColors,
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: totalVal > 0,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                const val = context.raw;
+                                const pct = ((val / totalVal) * 100).toFixed(1);
+                                return label + val + ' goal (' + pct + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+@endpush
