@@ -98,6 +98,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'verified', 'auditor'])->prefix('auditor')->name('auditor.')->group(function () {
     Route::get('/dashboard', [AuditorController::class, 'dashboard'])->name('dashboard');
+    Route::get('/logout', [AuditorController::class, 'logout'])->name('logout');
     Route::get('/categories', [AuditorController::class, 'categories'])->name('categories.index');
     Route::get('/categories/create', [AuditorController::class, 'createCategory'])->name('categories.create');
     Route::post('/categories', [AuditorController::class, 'storeCategory'])->name('categories.store');
@@ -105,7 +106,7 @@ Route::middleware(['auth', 'verified', 'auditor'])->prefix('auditor')->name('aud
     Route::get('/tags', [AuditorController::class, 'tags'])->name('tags.index');
     Route::delete('/tags/{tag}', [AuditorController::class, 'destroyTag'])->name('tags.destroy');
 });
-Route::middleware('guest')->prefix('auditor')->name('auditor.')->group(function () {
+Route::prefix('auditor')->name('auditor.')->group(function () {
     Route::get('/login', [AuditorLoginController::class, 'create'])->name('login');
     Route::post('/login', [AuditorLoginController::class, 'store']);
 });

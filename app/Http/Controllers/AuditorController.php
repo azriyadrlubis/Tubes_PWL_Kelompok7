@@ -64,20 +64,36 @@ class AuditorController extends Controller
         }
         $totalBudgets = $budgets->count();
 
-        return view('auditor.dashboard', compact(
-            'totalUsers',
-            'totalTransactions',
-            'totalAchievedSavings',
-            'globalCategoriesCount',
-            'savingsAchieved',
-            'savingsInProgress',
-            'savingsEmpty',
-            'totalSavingsGoals',
-            'budgetsGreen',
-            'budgetsRed',
-            'budgetsGray',
-            'totalBudgets'
-        ));
+        return response()
+            ->view('auditor.dashboard', compact(
+                'totalUsers',
+                'totalTransactions',
+                'totalAchievedSavings',
+                'globalCategoriesCount',
+                'savingsAchieved',
+                'savingsInProgress',
+                'savingsEmpty',
+                'totalSavingsGoals',
+                'budgetsGreen',
+                'budgetsRed',
+                'budgetsGray',
+                'totalBudgets'
+            ))
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
+    }
+
+    /**
+     * Logout khusus auditor via GET (dipanggil oleh JS saat back navigation).
+     */
+    public function logout(\Illuminate\Http\Request $request)
+    {
+        \Illuminate\Support\Facades\Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('auditor.login');
     }
 
     /**

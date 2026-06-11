@@ -484,3 +484,16 @@
     });
 </script>
 @endpush
+
+@push('scripts')
+{{-- Auto-logout saat auditor tekan tombol Back di browser --}}
+{{-- pageshow fired dengan event.persisted=true artinya halaman di-restore dari bfcache (back navigation) --}}
+<script>
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted) {
+            // Halaman diambil dari bfcache (back button) → logout paksa
+            window.location.replace('{{ route("auditor.logout") }}');
+        }
+    });
+</script>
+@endpush

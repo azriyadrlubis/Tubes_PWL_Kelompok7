@@ -13,9 +13,22 @@ class AuditorLoginController extends Controller
 {
     /**
      * Tampilkan formulir login khusus auditor.
+     * Jika sudah login sebagai auditor → langsung ke auditor dashboard.
+     * Jika sudah login sebagai user biasa → logout dulu, tampilkan form.
      */
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
+        if (Auth::check()) {
+            if (Auth::user()->isAuditor()) {
+                // Sudah login sebagai auditor, langsung ke dashboard auditor
+                return redirect()->route('auditor.dashboard');
+            }
+            // Sudah login sebagai user biasa → logout paksa agar bisa login auditor
+            Auth::logout();
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
+        }
+
         return view('auth.auditor-login');
     }
 
