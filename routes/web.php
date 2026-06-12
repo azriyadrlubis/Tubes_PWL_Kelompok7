@@ -56,7 +56,7 @@ Route::get('/dashboard', function () {
         'accounts' => $accounts,
         'selectedAccount' => $selectedAccount,
     ]);
-})->middleware(['auth'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 
 Route::get('/onboarding', function () {
@@ -64,10 +64,10 @@ Route::get('/onboarding', function () {
         return redirect()->route('dashboard');
     }
     return view('onboarding');
-})->middleware(['auth'])->name('onboarding');
+})->middleware(['auth', 'verified'])->name('onboarding');
 
 Route::post('/onboarding/complete', [OnboardingController::class, 'complete'])
-    ->middleware(['auth'])
+    ->middleware(['auth', 'verified'])
     ->name('onboarding.complete');
 
 Route::middleware('auth')->group(function () {
@@ -99,7 +99,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('tags', TagController::class)->except(['show']);
 });
 
-Route::middleware(['auth',  'auditor'])->prefix('auditor')->name('auditor.')->group(function () {
+Route::middleware(['auth', 'verified', 'auditor'])->prefix('auditor')->name('auditor.')->group(function () {
     Route::get('/dashboard', [AuditorController::class, 'dashboard'])->name('dashboard');
     Route::get('/logout', [AuditorController::class, 'logout'])->name('logout');
     Route::get('/categories', [AuditorController::class, 'categories'])->name('categories.index');
