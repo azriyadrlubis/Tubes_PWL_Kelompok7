@@ -25,8 +25,10 @@ class TagController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'  => 'required|string|max:150',
+            'name'  => 'required|string|max:150|unique:tags,name,NULL,id,user_id,' . auth()->id(),
             'color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+        ], [
+            'name.unique' => 'Tag dengan nama ini sudah ada. Silakan gunakan nama yang berbeda.',
         ]);
 
         Tag::create([
@@ -53,8 +55,10 @@ class TagController extends Controller
         abort_if($tag->user_id !== auth()->id(), 403);
 
         $validated = $request->validate([
-            'name'  => 'required|string|max:150',
+            'name'  => 'required|string|max:150|unique:tags,name,' . $tag->id . ',id,user_id,' . auth()->id(),
             'color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+        ], [
+            'name.unique' => 'Tag dengan nama ini sudah ada. Silakan gunakan nama yang berbeda.',
         ]);
 
         $tag->update([
