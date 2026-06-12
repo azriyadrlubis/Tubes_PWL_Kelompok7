@@ -112,15 +112,44 @@ class TransactionSeeder extends Seeder
                 continue;
             }
 
+            // Get user's budgets for linking expenses
+            $userBudgets = \App\Models\Budgeting::where('user_id', $user->id)->get();
+
             for ($i = 0; $i < 20; $i++) {
                 $category = $userCategories->random();
                 $type = $category->type ?? 'expense';
                 $amount = rand(15000, 500000);
 
+                // Find matching budget for expense transactions
+                $budgetingId = null;
+                if ($type === 'expense' && $category && $userBudgets->isNotEmpty()) {
+                    // Map category names to budget names
+                    $budgetNameMap = [
+                        'Makan & Minuman' => 'Budget Makan',
+                        'Kopi & Snack' => 'Budget Makan',
+                        'Restoran' => 'Budget Makan',
+                        'Transportasi' => 'Budget Transport',
+                        'Bensin' => 'Budget Transport',
+                        'Taksi & Ojek' => 'Budget Transport',
+                        'Belanja Barang' => 'Budget Belanja',
+                        'Pakaian & Fashion' => 'Budget Belanja',
+                        'Elektronik' => 'Budget Belanja',
+                        'Internet & Telepon' => 'Budget Internet',
+                    ];
+                    $budgetName = $budgetNameMap[$category->name] ?? null;
+                    if ($budgetName) {
+                        $matchingBudget = $userBudgets->firstWhere('name', $budgetName);
+                        if ($matchingBudget) {
+                            $budgetingId = $matchingBudget->id;
+                        }
+                    }
+                }
+
                 $transaction = Transaction::create([
                     'user_id' => $user->id,
                     'account_id' => $userAccounts->random()->id,
                     'category_id' => $category->id,
+                    'budgeting_id' => $budgetingId,
                     'type' => $type,
                     'amount' => $amount,
                     'title' => $transactionTitles[array_rand($transactionTitles)],
