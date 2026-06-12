@@ -265,7 +265,19 @@
                                                 </span>
                                             </div>
 
-                                            <div class="mt-5 grid grid-cols-3 gap-3">
+                                            <div class="mt-4">
+                                                <div class="flex items-center justify-between text-xs">
+                                                    <span class="font-medium text-slate-500">Progress</span>
+                                                    <span class="font-semibold {{ $isCompleted ? 'text-emerald-600' : ($isCancelled ? 'text-rose-600' : 'text-sky-600') }}">
+                                                        {{ number_format(min($progressPercent, 100), 0) }}%
+                                                    </span>
+                                                </div>
+                                                <div class="mt-1.5 h-2.5 overflow-hidden rounded-full bg-slate-100">
+                                                    <div class="h-full rounded-full {{ $barColor }}" style="width: {{ min($progressPercent, 100) }}%"></div>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-4 grid grid-cols-3 gap-3">
                                                 <div class="rounded-lg bg-slate-50 p-3 ring-1 ring-slate-200 min-w-0">
                                                     <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Saat Ini</p>
                                                     <p class="mt-2 text-xs sm:text-sm font-bold text-slate-950 break-all">
