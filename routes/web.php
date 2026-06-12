@@ -60,6 +60,9 @@ Route::get('/dashboard', function () {
 
 
 Route::get('/onboarding', function () {
+    if (Auth::user()->onboarding_completed) {
+        return redirect()->route('dashboard');
+    }
     return view('onboarding');
 })->middleware(['auth', 'verified'])->name('onboarding');
 

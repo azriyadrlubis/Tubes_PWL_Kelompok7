@@ -65,10 +65,7 @@
                     Sistem pemantauan keuangan, integrasi kategori global SDGs, dan moderasi konten transaksi.
                 </p>
             </div>
-            <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-200/60 rounded-full px-4 py-2 self-start lg:self-auto shadow-sm">
-                <span class="inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-xs font-semibold text-emerald-800">Sistem Keamanan Aktif</span>
-            </div>
+            
         </div>
 
         <!-- Alert Success -->

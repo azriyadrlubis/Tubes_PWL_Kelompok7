@@ -15,14 +15,18 @@ class OnboardingController extends Controller
      */
     public function complete(Request $request): RedirectResponse
     {
+        $user = Auth::user();
+
+        if ($user->onboarding_completed) {
+            return redirect()->route('dashboard');
+        }
+
         $request->validate([
             'currency'        => ['required', 'string', 'in:IDR,USD,EUR,SGD'],
             'initial_balance' => ['required', 'numeric', 'min:0', 'max:9999999999999'],
         ], [
             'initial_balance.max' => 'Angka yang dimasukkan terlalu besar.',
         ]);
-
-        $user = Auth::user();
 
         // Create the initial cash account with the chosen currency & balance
         Account::create([

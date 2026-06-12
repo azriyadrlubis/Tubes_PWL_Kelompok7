@@ -34,10 +34,7 @@
                     Pantau dan hapus tag buatan pengguna yang melanggar pedoman konten sistem keuangan MOMA.
                 </p>
             </div>
-            <div class="flex items-center gap-2 bg-red-50 border border-red-200/60 rounded-full px-4 py-2 self-start lg:self-auto shadow-sm">
-                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse"></span>
-                <span class="text-xs font-semibold text-red-800">Mode Moderasi Aktif</span>
-            </div>
+            
         </div>
 
         <!-- Alert Success -->
